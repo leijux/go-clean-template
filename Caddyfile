@@ -1,0 +1,33 @@
+http://app.lvh.me {
+	# 保留原始 Host 并透传客户端 IP —— 与原有 nginx 的 proxy_set_header 语义等价
+	# （X-Forwarded-For 由 Caddy reverse_proxy 默认处理，无需手动设置）
+	reverse_proxy app:8080 {
+		header_up Host {host}
+		header_up X-Real-IP {remote_host}
+	}
+}
+
+http://grpc.lvh.me {
+	# gRPC over HTTP/2：Caddy 的 reverse_proxy 原生支持 h2c 上游，无需额外配置
+	reverse_proxy app:8081 {
+		header_up Host {host}
+	}
+}
+
+http://rabbitmq.lvh.me {
+	reverse_proxy rabbitmq:15672 {
+		header_up Host {host}
+	}
+}
+
+http://nats.lvh.me {
+	reverse_proxy nats:8222 {
+		header_up Host {host}
+	}
+}
+
+http://jaeger.lvh.me {
+	reverse_proxy jaeger:16686 {
+		header_up Host {host}
+	}
+}

@@ -1,7 +1,8 @@
 .idea
 .git
 .github
-nginx
+caddy
+Caddyfile
 
 .dockerignore
 .env
