@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	translator "github.com/Conight/go-googletrans"
-	"github.com/evrone/go-clean-template/internal/entity"
-	"github.com/evrone/go-clean-template/internal/repo"
+	"github.com/leijux/go-clean-template/internal/entity"
+	"github.com/leijux/go-clean-template/internal/repo"
 )
 
 // TranslationWebAPI -.

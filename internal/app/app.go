@@ -8,28 +8,28 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/evrone/go-clean-template/config"
-	amqprpc "github.com/evrone/go-clean-template/internal/controller/amqp_rpc"
-	"github.com/evrone/go-clean-template/internal/controller/grpc"
-	grpcmw "github.com/evrone/go-clean-template/internal/controller/grpc/middleware"
-	natsrpc "github.com/evrone/go-clean-template/internal/controller/nats_rpc"
-	"github.com/evrone/go-clean-template/internal/controller/restapi"
-	persistTaskRepo "github.com/evrone/go-clean-template/internal/repo/persistent/task"
-	persistTranslationRepo "github.com/evrone/go-clean-template/internal/repo/persistent/translation"
-	persistUserRepo "github.com/evrone/go-clean-template/internal/repo/persistent/user"
-	"github.com/evrone/go-clean-template/internal/repo/webapi"
-	"github.com/evrone/go-clean-template/internal/usecase"
-	"github.com/evrone/go-clean-template/internal/usecase/task"
-	"github.com/evrone/go-clean-template/internal/usecase/translation"
-	"github.com/evrone/go-clean-template/internal/usecase/user"
-	"github.com/evrone/go-clean-template/pkg/grpcserver"
-	"github.com/evrone/go-clean-template/pkg/httpserver"
-	"github.com/evrone/go-clean-template/pkg/jwt"
-	"github.com/evrone/go-clean-template/pkg/logger"
-	natsRPCServer "github.com/evrone/go-clean-template/pkg/nats/nats_rpc/server"
-	"github.com/evrone/go-clean-template/pkg/postgres"
-	rmqRPCServer "github.com/evrone/go-clean-template/pkg/rabbitmq/rmq_rpc/server"
-	"github.com/evrone/go-clean-template/pkg/tracing"
+	"github.com/leijux/go-clean-template/config"
+	amqprpc "github.com/leijux/go-clean-template/internal/controller/amqp_rpc"
+	"github.com/leijux/go-clean-template/internal/controller/grpc"
+	grpcmw "github.com/leijux/go-clean-template/internal/controller/grpc/middleware"
+	natsrpc "github.com/leijux/go-clean-template/internal/controller/nats_rpc"
+	"github.com/leijux/go-clean-template/internal/controller/restapi"
+	persistTaskRepo "github.com/leijux/go-clean-template/internal/repo/persistent/task"
+	persistTranslationRepo "github.com/leijux/go-clean-template/internal/repo/persistent/translation"
+	persistUserRepo "github.com/leijux/go-clean-template/internal/repo/persistent/user"
+	"github.com/leijux/go-clean-template/internal/repo/webapi"
+	"github.com/leijux/go-clean-template/internal/usecase"
+	"github.com/leijux/go-clean-template/internal/usecase/task"
+	"github.com/leijux/go-clean-template/internal/usecase/translation"
+	"github.com/leijux/go-clean-template/internal/usecase/user"
+	"github.com/leijux/go-clean-template/pkg/grpcserver"
+	"github.com/leijux/go-clean-template/pkg/httpserver"
+	"github.com/leijux/go-clean-template/pkg/jwt"
+	"github.com/leijux/go-clean-template/pkg/logger"
+	natsRPCServer "github.com/leijux/go-clean-template/pkg/nats/nats_rpc/server"
+	"github.com/leijux/go-clean-template/pkg/postgres"
+	rmqRPCServer "github.com/leijux/go-clean-template/pkg/rabbitmq/rmq_rpc/server"
+	"github.com/leijux/go-clean-template/pkg/tracing"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	pbgrpc "google.golang.org/grpc"
 )
@@ -89,7 +89,7 @@ func initServers(cfg *config.Config, uc useCases, jwtManager *jwt.Manager, l log
 
 	// HTTP Server
 	httpServer := httpserver.New(l, httpserver.Port(cfg.HTTP.Port), httpserver.Prefork(cfg.HTTP.UsePreforkMode))
-	restapi.NewRouter(httpServer.App, cfg, uc.translation, uc.user, uc.task, jwtManager, l)
+	restapi.NewRouter(httpServer.App, cfg, uc.translation, uc.user, uc.task, l)
 
 	return servers{
 		rmq:  rmqServer,

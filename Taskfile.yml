@@ -2,9 +2,6 @@
 
 version: '3'
 
-# 等价于 Makefile 的 `include .env`（缺失时 fallback 到 .env.example）。
-# Task 的 dotenv 合并规则：先列出的文件优先，后续文件只补充尚未设置的变量，
-# 因此存在 .env 时以 .env 为准，缺失变量自动回落到 .env.example；文件不存在时静默忽略。
 dotenv:
   - '.env'
   - '.env.example'

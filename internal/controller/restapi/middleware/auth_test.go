@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/evrone/go-clean-template/internal/controller/restapi/middleware"
-	"github.com/evrone/go-clean-template/pkg/jwt"
 	"github.com/gofiber/fiber/v3"
+	"github.com/leijux/go-clean-template/internal/controller/restapi/middleware"
+	"github.com/leijux/go-clean-template/pkg/jwt"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -17,10 +17,12 @@ import (
 func newTestApp(t *testing.T) (*fiber.App, *jwt.Manager) {
 	t.Helper()
 
-	jwtManager := jwt.New("test-secret", time.Hour)
+	const testSecret = "test-secret"
+
+	jwtManager := jwt.New(testSecret, time.Hour)
 
 	app := fiber.New()
-	app.Use(middleware.Auth(jwtManager))
+	app.Use(middleware.Auth([]byte(testSecret)))
 	app.Get("/test", func(c fiber.Ctx) error {
 		userID, ok := c.Locals("userID").(string)
 		if !ok {

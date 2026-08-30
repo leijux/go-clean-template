@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/evrone/go-clean-template/internal/entity"
-	"github.com/evrone/go-clean-template/internal/repo"
-	"github.com/evrone/go-clean-template/internal/usecase"
+	"github.com/leijux/go-clean-template/internal/entity"
+	"github.com/leijux/go-clean-template/internal/repo"
+	"github.com/leijux/go-clean-template/internal/usecase"
 )
 
 // UseCase -.

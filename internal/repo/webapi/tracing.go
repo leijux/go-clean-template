@@ -3,15 +3,15 @@ package webapi
 import (
 	"context"
 
-	"github.com/evrone/go-clean-template/internal/entity"
-	"github.com/evrone/go-clean-template/internal/repo"
+	"github.com/leijux/go-clean-template/internal/entity"
+	"github.com/leijux/go-clean-template/internal/repo"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 )
 
-const _tracerName = "github.com/evrone/go-clean-template/internal/repo/webapi"
+const _tracerName = "github.com/leijux/go-clean-template/internal/repo/webapi"
 
 // tracedTranslationWebAPI wraps a TranslationWebAPI with OpenTelemetry spans
 // for the outbound call to the external translation service.

@@ -1,16 +1,15 @@
 package v1
 
 import (
-	"github.com/evrone/go-clean-template/internal/controller/restapi/middleware"
-	"github.com/evrone/go-clean-template/internal/usecase"
-	"github.com/evrone/go-clean-template/pkg/jwt"
-	"github.com/evrone/go-clean-template/pkg/logger"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
+	"github.com/leijux/go-clean-template/internal/controller/restapi/middleware"
+	"github.com/leijux/go-clean-template/internal/usecase"
+	"github.com/leijux/go-clean-template/pkg/logger"
 )
 
 // NewRoutes -.
-func NewRoutes(apiV1Group fiber.Router, t usecase.Translation, u usecase.User, tk usecase.Task, jwtManager *jwt.Manager, l logger.Interface) {
+func NewRoutes(apiV1Group fiber.Router, t usecase.Translation, u usecase.User, tk usecase.Task, jwtSecret []byte, l logger.Interface) {
 	r := &V1{t: t, u: u, tk: tk, l: l, v: validator.New(validator.WithRequiredStructEnabled())}
 
 	// Public routes
@@ -21,7 +20,7 @@ func NewRoutes(apiV1Group fiber.Router, t usecase.Translation, u usecase.User, t
 	}
 
 	// Protected routes
-	protected := apiV1Group.Group("", middleware.Auth(jwtManager))
+	protected := apiV1Group.Group("", middleware.Auth(jwtSecret))
 
 	userGroup := protected.Group("/user")
 	{

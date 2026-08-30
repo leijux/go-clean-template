@@ -3,17 +3,16 @@ package restapi
 import (
 	"net/http"
 
-	"github.com/evrone/go-clean-template/config"
-	_ "github.com/evrone/go-clean-template/docs" // Swagger docs.
-	"github.com/evrone/go-clean-template/internal/controller/restapi/middleware"
-	v1 "github.com/evrone/go-clean-template/internal/controller/restapi/v1"
-	"github.com/evrone/go-clean-template/internal/usecase"
-	"github.com/evrone/go-clean-template/pkg/jwt"
-	"github.com/evrone/go-clean-template/pkg/logger"
 	"github.com/gofiber/contrib/v3/otel"
 	"github.com/gofiber/contrib/v3/prometheus"
 	"github.com/gofiber/contrib/v3/swaggerui"
 	"github.com/gofiber/fiber/v3"
+	"github.com/leijux/go-clean-template/config"
+	_ "github.com/leijux/go-clean-template/docs" // Swagger docs.
+	"github.com/leijux/go-clean-template/internal/controller/restapi/middleware"
+	v1 "github.com/leijux/go-clean-template/internal/controller/restapi/v1"
+	"github.com/leijux/go-clean-template/internal/usecase"
+	"github.com/leijux/go-clean-template/pkg/logger"
 )
 
 // NewRouter -.
@@ -27,14 +26,14 @@ import (
 //	@securityDefinitions.apikey BearerAuth
 //	@in header
 //	@name Authorization
-func NewRouter(app *fiber.App, cfg *config.Config, t usecase.Translation, u usecase.User, tk usecase.Task, jwtManager *jwt.Manager, l logger.Interface) {
+func NewRouter(app *fiber.App, cfg *config.Config, t usecase.Translation, u usecase.User, tk usecase.Task, l logger.Interface) {
 	// Options
 	app.Use(middleware.Logger(l))
 	app.Use(middleware.Recovery(l))
 
 	// Prometheus metrics
 	if cfg.Metrics.Enabled {
-		app.Use(prometheus.New(prometheus.Config{ServiceName: "my-service-name"}))
+		app.Use(prometheus.New(prometheus.Config{ServiceName: cfg.App.Name}))
 	}
 
 	// Swagger
@@ -52,6 +51,6 @@ func NewRouter(app *fiber.App, cfg *config.Config, t usecase.Translation, u usec
 			apiV1Group.Use(otel.Middleware())
 		}
 
-		v1.NewRoutes(apiV1Group, t, u, tk, jwtManager, l)
+		v1.NewRoutes(apiV1Group, t, u, tk, []byte(cfg.JWT.Secret), l)
 	}
 }

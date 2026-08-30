@@ -3,15 +3,15 @@ package persistent
 import (
 	"context"
 
-	"github.com/evrone/go-clean-template/internal/entity"
-	"github.com/evrone/go-clean-template/internal/repo"
+	"github.com/leijux/go-clean-template/internal/entity"
+	"github.com/leijux/go-clean-template/internal/repo"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 )
 
-const _tracerName = "github.com/evrone/go-clean-template/internal/repo/persistent/task"
+const _tracerName = "github.com/leijux/go-clean-template/internal/repo/persistent/task"
 
 // tracedRepo wraps a TranslationRepo with OpenTelemetry spans.
 type tracedRepo struct {

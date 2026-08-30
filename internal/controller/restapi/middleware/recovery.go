@@ -5,9 +5,9 @@ import (
 	"runtime/debug"
 	"strings"
 
-	"github.com/evrone/go-clean-template/pkg/logger"
 	"github.com/gofiber/fiber/v3"
 	fiberRecover "github.com/gofiber/fiber/v3/middleware/recover"
+	"github.com/leijux/go-clean-template/pkg/logger"
 )
 
 func buildPanicMessage(ctx fiber.Ctx, err any) string {

@@ -114,6 +114,8 @@ github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAw
 github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
 github.com/Masterminds/squirrel v1.5.4 h1:uUcX/aBc8O7Fg9kaISIUsHXdKuqehiXAMQTYX8afzqM=
 github.com/Masterminds/squirrel v1.5.4/go.mod h1:NNaOrjSoIDfDA40n7sr2tPNZRfjzjA400rg+riTZj10=
+github.com/MicahParks/keyfunc/v2 v2.1.0 h1:6ZXKb9Rp6qp1bDbJefnG7cTH8yMN1IC/4nf+GVjO99k=
+github.com/MicahParks/keyfunc/v2 v2.1.0/go.mod h1:rW42fi+xgLJ2FRRXAfNx9ZA8WpD4OeE/yHVMteCkw9k=
 github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
 github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
 github.com/MirrexOne/unqueryvet v1.5.4 h1:38QOxShO7JmMWT+eCdDMbcUgGCOeJphVkzzRgyLJgsQ=
@@ -439,6 +441,8 @@ github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 h1:ZpnhV/YsD2/4cESfV5+
 github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2/go.mod h1:bBOAhwG1umN6/6ZUMtDFBMQR8jRg9O75tm9K00oMsK4=
 github.com/godoc-lint/godoc-lint v0.11.2 h1:Bp0FkJWoSdNsBikdNgIcgtaoo+xz6I/Y9s5WSBQUeeM=
 github.com/godoc-lint/godoc-lint v0.11.2/go.mod h1:iVpGdL1JCikNH2gGeAn3Hh+AgN5Gx/I/cxV+91L41jo=
+github.com/gofiber/contrib/v3/jwt v1.2.1 h1:9uj/0z+9DYfMQ5H6LxXYYFNF0FNXOnZZB+xE8tacLqY=
+github.com/gofiber/contrib/v3/jwt v1.2.1/go.mod h1:TRBhPoPSrzsyd3mNK7iF/wJmUyfXYEb4k2pMyhRcvcQ=
 github.com/gofiber/contrib/v3/otel v1.2.4 h1:wID72pBdMhWcoUzmj4T8OYH2mVabDHtw/hZG5BmRvWQ=
 github.com/gofiber/contrib/v3/otel v1.2.4/go.mod h1:aK0uuKzhSJ8X6lN6I7AlDCVoAr4ES0ZjkLl0Cny/WXE=
 github.com/gofiber/contrib/v3/prometheus v0.0.2 h1:Ei6KQqqL7QKYJqDbhByR5ckrYZjjyQM1tXwxsvTlfZ8=

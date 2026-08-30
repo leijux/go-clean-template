@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/evrone/go-clean-template/pkg/logger"
-	natsrpc "github.com/evrone/go-clean-template/pkg/nats/nats_rpc"
 	"github.com/goccy/go-json"
+	"github.com/leijux/go-clean-template/pkg/logger"
+	natsrpc "github.com/leijux/go-clean-template/pkg/nats/nats_rpc"
 	"github.com/nats-io/nats.go"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"

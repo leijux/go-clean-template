@@ -3,15 +3,15 @@ package translation
 import (
 	"context"
 
-	"github.com/evrone/go-clean-template/internal/entity"
-	"github.com/evrone/go-clean-template/internal/usecase"
+	"github.com/leijux/go-clean-template/internal/entity"
+	"github.com/leijux/go-clean-template/internal/usecase"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 )
 
-const _tracerName = "github.com/evrone/go-clean-template/internal/usecase/translation"
+const _tracerName = "github.com/leijux/go-clean-template/internal/usecase/translation"
 
 // tracedUseCase wraps a Translation usecase with OpenTelemetry spans, closing
 // the gap between transport spans (HTTP/gRPC/AMQP/NATS) and repository spans.

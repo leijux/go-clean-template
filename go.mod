@@ -1,4 +1,4 @@
-module github.com/evrone/go-clean-template
+module github.com/leijux/go-clean-template
 
 go 1.27
 
@@ -21,6 +21,7 @@ require (
 	github.com/exaring/otelpgx v0.11.1
 	github.com/go-playground/validator/v10 v10.30.3
 	github.com/goccy/go-json v0.10.6
+	github.com/gofiber/contrib/v3/jwt v1.2.1
 	github.com/gofiber/contrib/v3/otel v1.2.4
 	github.com/gofiber/contrib/v3/prometheus v0.0.2
 	github.com/gofiber/contrib/v3/swaggerui v1.0.11
@@ -92,6 +93,7 @@ require (
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.53.0 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/Masterminds/semver/v3 v3.5.0 // indirect
+	github.com/MicahParks/keyfunc/v2 v2.1.0 // indirect
 	github.com/MirrexOne/unqueryvet v1.5.4 // indirect
 	github.com/OpenPeeDeeP/depguard/v2 v2.2.1 // indirect
 	github.com/alecthomas/chroma/v2 v2.27.0 // indirect
