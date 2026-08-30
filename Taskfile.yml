@@ -1,0 +1,153 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+# 等价于 Makefile 的 `include .env`（缺失时 fallback 到 .env.example）。
+# Task 的 dotenv 合并规则：先列出的文件优先，后续文件只补充尚未设置的变量，
+# 因此存在 .env 时以 .env 为准，缺失变量自动回落到 .env.example；文件不存在时静默忽略。
+dotenv:
+  - '.env'
+  - '.env.example'
+
+vars:
+  BASE_STACK: docker compose -f docker-compose.yml
+  INTEGRATION_TEST_STACK: docker compose -f docker-compose.yml -f docker-compose-integration-test.yml
+  ALL_STACK: '{{.INTEGRATION_TEST_STACK}}'
+
+tasks:
+  default:
+    desc: Display this help screen
+    cmds:
+      - task --list
+    silent: true
+
+  help: ### Display this help screen
+    desc: Display this help screen
+    cmds:
+      - task --list
+    silent: true
+
+  compose-up: ### Run docker compose (without backend and reverse proxy)
+    desc: Run docker compose (without backend and reverse proxy)
+    cmds:
+      - '{{.BASE_STACK}} up --build -d db rabbitmq nats && docker compose logs -f'
+
+  compose-up-all: ### Run docker compose (with backend and reverse proxy)
+    desc: Run docker compose (with backend and reverse proxy)
+    cmds:
+      - '{{.BASE_STACK}} up --build -d'
+
+  compose-up-integration-test: ### Run docker compose with integration test
+    desc: Run docker compose with integration test
+    cmds:
+      - '{{.INTEGRATION_TEST_STACK}} up --build --abort-on-container-exit --exit-code-from integration-test; exit_code=$?; {{.INTEGRATION_TEST_STACK}} down --remove-orphans; exit $exit_code'
+
+  compose-down: ### Down docker compose
+    desc: Down docker compose
+    cmds:
+      - '{{.ALL_STACK}} down --remove-orphans'
+
+  swag-v1: ### swag init
+    desc: swag init
+    cmds:
+      - swag init --parseDependency -g internal/controller/restapi/router.go
+
+  proto-v1: ### generate source files from proto
+    desc: Generate source files from proto
+    cmds:
+      - protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative docs/proto/v1/*.proto
+
+  deps: ### deps tidy + verify
+    desc: Tidy and verify modules
+    cmds:
+      - go mod tidy
+      - go mod verify
+
+  deps-audit: ### check dependencies vulnerabilities
+    desc: Check dependencies vulnerabilities
+    cmds:
+      - govulncheck ./...
+
+  fix-diff: ### Show code changes by `go fix`
+    desc: Show code changes by go fix
+    cmds:
+      - go fix -diff ./...
+
+  format: ### Run code formatter
+    desc: Run code formatter
+    cmds:
+      - go fix ./...
+      - gofumpt -l -w .
+      - gci write . --skip-generated -s standard -s default
+
+  run: ### swag run for API v1 (serial deps: deps, swag-v1, proto-v1)
+    desc: swag run for API v1
+    cmds:
+      - task: deps
+      - task: swag-v1
+      - task: proto-v1
+      - go mod download
+      - CGO_ENABLED=0 go run -tags migrate ./cmd/app
+
+  docker-rm-volume: ### remove docker volume
+    desc: Remove docker volume
+    cmds:
+      - docker volume rm go-clean-template_pg-data
+
+  linter-golangci: ### check by golangci linter
+    desc: Check by golangci linter
+    cmds:
+      - golangci-lint run
+
+  linter-hadolint: ### check by hadolint linter
+    desc: Check by hadolint linter
+    cmds:
+      - "git ls-files --exclude='Dockerfile*' --ignored | xargs hadolint"
+
+  linter-dotenv: ### check by dotenv linter
+    desc: Check by dotenv linter
+    cmds:
+      - dotenv-linter
+
+  test: ### run test
+    desc: Run test
+    cmds:
+      - go test -v -race -covermode atomic -coverprofile=coverage.txt ./internal/... ./pkg/...
+
+  integration-test: ### run integration-test
+    desc: Run integration-test
+    cmds:
+      - go clean -testcache && go test -v ./integration-test/...
+
+  mock: ### run mockgen
+    desc: Run mockgen
+    cmds:
+      - mockgen -source ./internal/repo/contracts.go -package usecase_test > ./internal/usecase/mocks_repo_test.go
+      - mockgen -source ./internal/usecase/contracts.go -package usecase_test > ./internal/usecase/mocks_usecase_test.go
+
+  migrate-create: ### create new migration (usage: task migrate-create -- <name>)
+    desc: 'Create new migration (usage: task migrate-create -- <name>)'
+    cmds:
+      - "migrate create -ext sql -dir migrations '{{.CLI_ARGS}}'"
+
+  migrate-up: ### migration up
+    desc: Migration up
+    cmds:
+      - 'migrate -path migrations -database "$PG_URL?sslmode=disable" up'
+
+  bin-deps: ### install tools
+    desc: Install tools
+    cmds:
+      - go install tool
+      - go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate
+
+  pre-commit: ### run pre-commit (serial: deps, swag-v1, proto-v1, mock, format, linter-golangci, test)
+    desc: Run pre-commit
+    cmds:
+      - task: deps
+      - task: swag-v1
+      - task: proto-v1
+      - task: mock
+      - task: format
+      - task: linter-golangci
+      - task: test
