@@ -23,3 +23,11 @@ bin/
 vendor/
 
 coverage.txt
+
+# air (hot-reload) artifacts
+tmp/
+build-errors.log
+
+.reasonix/
+.agents/
+skills-lock.json
