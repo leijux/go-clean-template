@@ -2,7 +2,7 @@
 
 # 与 Taskfile.yml 的 dotenv 规则保持一致：.env 优先，缺失变量回落 .env.example；
 # 文件不存在时 air 仅记录警告并继续（已实测验证）。
-env_files = [".env", ".env.example"]
+env_files = [".env"]
 root = "."
 testdata_dir = "testdata"
 tmp_dir = "tmp"
@@ -16,7 +16,7 @@ tmp_dir = "tmp"
   delay = 1000
   # v1.64.5 起 bin 已废弃（会打印 deprecation 警告），用 entrypoint 替代。
   entrypoint = ["tmp\\main.exe"]
-  exclude_dir = ["assets", "tmp", "vendor", "testdata"]
+  exclude_dir = ["assets", "tmp", "vendor", "testdata", "frontend", "integration-test"]
   exclude_file = []
   exclude_regex = ["_test.go"]
   exclude_unchanged = false
