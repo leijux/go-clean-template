@@ -105,10 +105,12 @@ shape from a neighbouring handler in the same transport.
    validation (required, min, max, oneof) lives here. Domain validation — anything that needs to
    know the rules, like a status transition — lives on the entity or the use case and must not be
    duplicated in the controller.
-4. **Call the use case** with the request context: `ctx` in Fiber (the Ctx itself
-   implements `context.Context`; **not** `ctx.RequestCtx()`, which drops the trace), the handler's
-   `ctx` everywhere else. `context.Context` is the first parameter of every method that crosses a
-   layer.
+4. **Call the use case** with the request context: `ctx.Context()` in Fiber (**not** the `ctx`
+   itself — the Ctx implements `context.Context`, but its `Value()` is backed by fasthttp user
+   values, so a span stored via the otel middleware's `SetContext` is invisible to it and every
+   downstream span becomes a new root trace; and **not** `ctx.RequestCtx()`, which also drops the
+   trace), the handler's `ctx` everywhere else. `context.Context` is the first parameter of every
+   method that crosses a layer.
 5. **Map the error.** `errors.Is` against the `entity.Err*` sentinels → a transport status. Log the
    wrapped error, return a generic message to the caller.
 6. **Encode the response.** Return an `entity` type directly only when its JSON shape is already

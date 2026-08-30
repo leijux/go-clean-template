@@ -44,7 +44,7 @@ func (r *V1) createTask(ctx fiber.Ctx) error {
 		return errorResponse(ctx, http.StatusBadRequest, "invalid request body")
 	}
 
-	task, err := r.tk.Create(ctx, userID, body.Title, body.Description)
+	task, err := r.tk.Create(ctx.Context(), userID, body.Title, body.Description)
 	if err != nil {
 		r.l.Error(err, "restapi - v1 - createTask")
 
@@ -94,7 +94,7 @@ func (r *V1) listTasks(ctx fiber.Ctx) error {
 		offset = 0
 	}
 
-	tasks, total, err := r.tk.List(ctx, userID, status, limit, offset)
+	tasks, total, err := r.tk.List(ctx.Context(), userID, status, limit, offset)
 	if err != nil {
 		r.l.Error(err, "restapi - v1 - listTasks")
 
@@ -128,7 +128,7 @@ func (r *V1) getTask(ctx fiber.Ctx) error {
 
 	taskID := ctx.Params("id")
 
-	task, err := r.tk.Get(ctx, userID, taskID)
+	task, err := r.tk.Get(ctx.Context(), userID, taskID)
 	if err != nil {
 		r.l.Error(err, "restapi - v1 - getTask")
 
@@ -184,7 +184,7 @@ func (r *V1) updateTask(ctx fiber.Ctx) error {
 		return errorResponse(ctx, http.StatusBadRequest, "invalid request body")
 	}
 
-	task, err := r.tk.Update(ctx, userID, taskID, body.Title, body.Description)
+	task, err := r.tk.Update(ctx.Context(), userID, taskID, body.Title, body.Description)
 	if err != nil {
 		r.l.Error(err, "restapi - v1 - updateTask")
 
@@ -240,7 +240,7 @@ func (r *V1) transitionTask(ctx fiber.Ctx) error {
 		return errorResponse(ctx, http.StatusBadRequest, "invalid request body")
 	}
 
-	task, err := r.tk.Transition(ctx, userID, taskID, body.Status)
+	task, err := r.tk.Transition(ctx.Context(), userID, taskID, body.Status)
 	if err != nil {
 		r.l.Error(err, "restapi - v1 - transitionTask")
 
@@ -281,7 +281,7 @@ func (r *V1) deleteTask(ctx fiber.Ctx) error {
 
 	taskID := ctx.Params("id")
 
-	err := r.tk.Delete(ctx, userID, taskID)
+	err := r.tk.Delete(ctx.Context(), userID, taskID)
 	if err != nil {
 		r.l.Error(err, "restapi - v1 - deleteTask")
 

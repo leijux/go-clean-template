@@ -37,7 +37,7 @@ func (r *V1) register(ctx fiber.Ctx) error {
 		return errorResponse(ctx, http.StatusBadRequest, "invalid request body")
 	}
 
-	user, err := r.u.Register(ctx, body.Username, body.Email, body.Password)
+	user, err := r.u.Register(ctx.Context(), body.Username, body.Email, body.Password)
 	if err != nil {
 		r.l.Error(err, "restapi - v1 - register")
 
@@ -78,7 +78,7 @@ func (r *V1) login(ctx fiber.Ctx) error {
 		return errorResponse(ctx, http.StatusBadRequest, "invalid request body")
 	}
 
-	token, err := r.u.Login(ctx, body.Email, body.Password)
+	token, err := r.u.Login(ctx.Context(), body.Email, body.Password)
 	if err != nil {
 		r.l.Error(err, "restapi - v1 - login")
 
@@ -109,7 +109,7 @@ func (r *V1) profile(ctx fiber.Ctx) error {
 		return errorResponse(ctx, http.StatusUnauthorized, "unauthorized")
 	}
 
-	user, err := r.u.GetUser(ctx, userID)
+	user, err := r.u.GetUser(ctx.Context(), userID)
 	if err != nil {
 		r.l.Error(err, "restapi - v1 - profile")
 

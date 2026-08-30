@@ -25,7 +25,7 @@ func (r *V1) history(ctx fiber.Ctx) error {
 		return errorResponse(ctx, http.StatusUnauthorized, "unauthorized")
 	}
 
-	translationHistory, err := r.t.History(ctx, userID)
+	translationHistory, err := r.t.History(ctx.Context(), userID)
 	if err != nil {
 		r.l.Error(err, "restapi - v1 - history")
 
@@ -69,7 +69,7 @@ func (r *V1) doTranslate(ctx fiber.Ctx) error {
 	}
 
 	translation, err := r.t.Translate(
-		ctx,
+		ctx.Context(),
 		userID,
 		entity.Translation{
 			Source:      body.Source,
