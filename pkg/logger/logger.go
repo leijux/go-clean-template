@@ -3,6 +3,8 @@ package logger
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/rs/zerolog"
@@ -39,6 +41,10 @@ func New(level string) *Logger {
 		l = zerolog.DebugLevel
 	default:
 		l = zerolog.InfoLevel
+	}
+
+	zerolog.CallerMarshalFunc = func(pc uintptr, file string, line int) string {
+		return filepath.Base(file) + ":" + strconv.Itoa(line)
 	}
 
 	zerolog.SetGlobalLevel(l)

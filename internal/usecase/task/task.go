@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"time"
+	"uuid"
 
-	"github.com/google/uuid"
 	"github.com/leijux/go-clean-template/internal/entity"
 	"github.com/leijux/go-clean-template/internal/repo"
 	"github.com/leijux/go-clean-template/internal/usecase"
