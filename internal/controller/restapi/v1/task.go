@@ -18,10 +18,10 @@ import (
 // @Accept      json
 // @Produce     json
 // @Param       request body     request.CreateTask true "Task data"
-// @Success     201     {object} response.Envelope{Code=int,Message=string,Data=entity.Task}
-// @Failure     400     {object} response.Envelope
-// @Failure     401     {object} response.Envelope
-// @Failure     500     {object} response.Envelope
+// @Success     201     {object} response.Ok[entity.Task]{Code=int,Message=string,Data=entity.Task}
+// @Failure     400     {object} response.Error
+// @Failure     401     {object} response.Error
+// @Failure     500     {object} response.Error
 // @Security    BearerAuth
 // @Router      /tasks [post]
 func (r *V1) createTask(ctx fiber.Ctx) error {
@@ -62,9 +62,9 @@ func (r *V1) createTask(ctx fiber.Ctx) error {
 // @Param       status query    string false "Filter by status" Enums(todo, in_progress, done)
 // @Param       limit  query    int    false "Limit"  default(10)
 // @Param       offset query    int    false "Offset" default(0)
-// @Success     200    {object} response.Envelope{Code=int,Message=string,Data=response.TaskList}
-// @Failure     401    {object} response.Envelope
-// @Failure     500    {object} response.Envelope
+// @Success     200    {object} response.Ok[response.TaskList]{Code=int,Message=string,Data=response.TaskList}
+// @Failure     401    {object} response.Error
+// @Failure     500    {object} response.Error
 // @Security    BearerAuth
 // @Router      /tasks [get]
 func (r *V1) listTasks(ctx fiber.Ctx) error {
@@ -113,11 +113,11 @@ func (r *V1) listTasks(ctx fiber.Ctx) error {
 // @Tags        tasks
 // @Produce     json
 // @Param       id  path     string true "Task ID"
-// @Success     200 {object} response.Envelope{Code=int,Message=string,Data=entity.Task}
-// @Failure     401 {object} response.Envelope
-// @Failure     403 {object} response.Envelope
-// @Failure     404 {object} response.Envelope
-// @Failure     500 {object} response.Envelope
+// @Success     200 {object} response.Ok[entity.Task]{Code=int,Message=string,Data=entity.Task}
+// @Failure     401 {object} response.Error
+// @Failure     403 {object} response.Error
+// @Failure     404 {object} response.Error
+// @Failure     500 {object} response.Error
 // @Security    BearerAuth
 // @Router      /tasks/{id} [get]
 func (r *V1) getTask(ctx fiber.Ctx) error {
@@ -154,12 +154,12 @@ func (r *V1) getTask(ctx fiber.Ctx) error {
 // @Produce     json
 // @Param       id      path     string            true "Task ID"
 // @Param       request body     request.UpdateTask  true "Updated task data"
-// @Success     200     {object} response.Envelope{Code=int,Message=string,Data=entity.Task}
-// @Failure     400     {object} response.Envelope
-// @Failure     401     {object} response.Envelope
-// @Failure     403     {object} response.Envelope
-// @Failure     404     {object} response.Envelope
-// @Failure     500     {object} response.Envelope
+// @Success     200     {object} response.Ok[entity.Task]{Code=int,Message=string,Data=entity.Task}
+// @Failure     400     {object} response.Error
+// @Failure     401     {object} response.Error
+// @Failure     403     {object} response.Error
+// @Failure     404     {object} response.Error
+// @Failure     500     {object} response.Error
 // @Security    BearerAuth
 // @Router      /tasks/{id} [put]
 func (r *V1) updateTask(ctx fiber.Ctx) error {
@@ -210,12 +210,12 @@ func (r *V1) updateTask(ctx fiber.Ctx) error {
 // @Produce     json
 // @Param       id      path     string                true "Task ID"
 // @Param       request body     request.TransitionTask  true "New status"
-// @Success     200     {object} response.Envelope{Code=int,Message=string,Data=entity.Task}
-// @Failure     400     {object} response.Envelope
-// @Failure     401     {object} response.Envelope
-// @Failure     403     {object} response.Envelope
-// @Failure     404     {object} response.Envelope
-// @Failure     500     {object} response.Envelope
+// @Success     200     {object} response.Ok[entity.Task]{Code=int,Message=string,Data=entity.Task}
+// @Failure     400     {object} response.Error
+// @Failure     401     {object} response.Error
+// @Failure     403     {object} response.Error
+// @Failure     404     {object} response.Error
+// @Failure     500     {object} response.Error
 // @Security    BearerAuth
 // @Router      /tasks/{id}/status [patch]
 func (r *V1) transitionTask(ctx fiber.Ctx) error {
@@ -267,10 +267,10 @@ func (r *V1) transitionTask(ctx fiber.Ctx) error {
 // @ID          delete-task
 // @Tags        tasks
 // @Param       id  path     string true "Task ID"
-// @Success     200 {object} response.Envelope{Code=int,Message=string,Data=object}
-// @Failure     401 {object} response.Envelope
-// @Failure     404 {object} response.Envelope
-// @Failure     500 {object} response.Envelope
+// @Success     200 {object} response.Ok[any]{Code=int,Message=string,Data=object}
+// @Failure     401 {object} response.Error
+// @Failure     404 {object} response.Error
+// @Failure     500 {object} response.Error
 // @Security    BearerAuth
 // @Router      /tasks/{id} [delete]
 func (r *V1) deleteTask(ctx fiber.Ctx) error {

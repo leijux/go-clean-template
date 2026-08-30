@@ -17,10 +17,10 @@ import (
 // @Accept      json
 // @Produce     json
 // @Param       request body     request.Register true "Registration data"
-// @Success     201     {object} response.Envelope{Code=int,Message=string,Data=entity.User}
-// @Failure     400     {object} response.Envelope
-// @Failure     409     {object} response.Envelope
-// @Failure     500     {object} response.Envelope
+// @Success     201     {object} response.Ok[entity.User]{Code=int,Message=string,Data=entity.User}
+// @Failure     400     {object} response.Error
+// @Failure     409     {object} response.Error
+// @Failure     500     {object} response.Error
 // @Router      /auth/register [post]
 func (r *V1) register(ctx fiber.Ctx) error {
 	var body request.Register
@@ -58,10 +58,10 @@ func (r *V1) register(ctx fiber.Ctx) error {
 // @Accept      json
 // @Produce     json
 // @Param       request body     request.Login true "Login credentials"
-// @Success     200     {object} response.Envelope{Code=int,Message=string,Data=response.Token}
-// @Failure     400     {object} response.Envelope
-// @Failure     401     {object} response.Envelope
-// @Failure     500     {object} response.Envelope
+// @Success     200     {object} response.Ok[response.Token]{Code=int,Message=string,Data=response.Token}
+// @Failure     400     {object} response.Error
+// @Failure     401     {object} response.Error
+// @Failure     500     {object} response.Error
 // @Router      /auth/login [post]
 func (r *V1) login(ctx fiber.Ctx) error {
 	var body request.Login
@@ -97,10 +97,10 @@ func (r *V1) login(ctx fiber.Ctx) error {
 // @ID          profile
 // @Tags        user
 // @Produce     json
-// @Success     200 {object} response.Envelope{Code=int,Message=string,Data=entity.User}
-// @Failure     401 {object} response.Envelope
-// @Failure     404 {object} response.Envelope
-// @Failure     500 {object} response.Envelope
+// @Success     200 {object} response.Ok[entity.User]{Code=int,Message=string,Data=entity.User}
+// @Failure     401 {object} response.Error
+// @Failure     404 {object} response.Error
+// @Failure     500 {object} response.Error
 // @Security    BearerAuth
 // @Router      /user/profile [get]
 func (r *V1) profile(ctx fiber.Ctx) error {

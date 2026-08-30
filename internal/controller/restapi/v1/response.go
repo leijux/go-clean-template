@@ -5,9 +5,9 @@ import (
 	"github.com/leijux/go-clean-template/internal/controller/restapi/v1/response"
 )
 
-// okResponse wraps a successful payload in the unified envelope.
-func okResponse(ctx fiber.Ctx, code int, data any) error {
-	return ctx.Status(code).JSON(response.Envelope{
+// okResponse wraps a successful payload in the success envelope.
+func okResponse[T any](ctx fiber.Ctx, code int, data T) error {
+	return ctx.Status(code).JSON(response.Ok[T]{
 		Code:    code,
 		Message: "ok",
 		Data:    data,
@@ -16,14 +16,13 @@ func okResponse(ctx fiber.Ctx, code int, data any) error {
 
 // okResponseNoData wraps a successful response that carries no payload.
 func okResponseNoData(ctx fiber.Ctx, code int) error {
-	return okResponse(ctx, code, nil)
+	return okResponse[any](ctx, code, nil)
 }
 
-// errorResponse wraps an error summary in the unified envelope.
+// errorResponse wraps an error summary in the error envelope.
 func errorResponse(ctx fiber.Ctx, code int, msg string) error {
-	return ctx.Status(code).JSON(response.Envelope{
+	return ctx.Status(code).JSON(response.Error{
 		Code:    code,
 		Message: msg,
-		Data:    nil,
 	})
 }

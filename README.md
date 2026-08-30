@@ -108,7 +108,8 @@ Text translation via external API with history tracking.
 
 ### Unified response format
 
-All REST endpoints return the same JSON envelope:
+All REST endpoints return one of two distinct bodies, so clients can tell success and error
+apart by shape. The successful response is an `Ok`:
 
 ```json
 {
@@ -119,12 +120,23 @@ All REST endpoints return the same JSON envelope:
 ```
 
 - `code` mirrors the HTTP status code.
-- `message` is a short summary — `"ok"` on success, a description on failure.
-- `data` holds the payload: the business object on success (`null` for operations with no body,
-  e.g. delete), and `null` on error.
+- `message` is a short summary — `"ok"` on success.
+- `data` holds the payload; `null` for operations with no body (e.g. delete).
 
-On failure the HTTP status code is preserved and the error description is carried in `message`
-with `data: null`. See the Swagger spec (`/v1/swagger`) for per-endpoint `data` schemas.
+On failure the HTTP status code is preserved and the body is an `Error` envelope, which never
+carries a `data` field:
+
+```json
+{
+  "code": 400,
+  "message": "invalid request body"
+}
+```
+
+- `code` mirrors the HTTP status code.
+- `message` carries the error description.
+
+See the Swagger spec (`/v1/swagger`) for per-endpoint `data` schemas.
 
 ## Quick start
 

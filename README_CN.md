@@ -103,7 +103,7 @@ CRUD 操作，支持状态状态机。
 
 ### 统一响应格式
 
-所有 REST 端点返回相同的 JSON 信封（envelope）：
+所有 REST 端点返回两种不同的响应体，客户端可凭结构区分成功与失败响应。成功响应是 `Ok`：
 
 ```json
 {
@@ -114,10 +114,21 @@ CRUD 操作，支持状态状态机。
 ```
 
 - `code` 与 HTTP 状态码一致。
-- `message` 为简短说明：成功时为 `"ok"`，失败时为错误描述。
-- `data` 为载荷：成功时为业务对象（无返回体的操作如删除则为 `null`），失败时为 `null`。
+- `message` 为简短说明：成功时为 `"ok"`。
+- `data` 为载荷；无返回体的操作（如删除）则为 `null`。
 
-失败时仍保留 HTTP 状态码，错误描述放在 `message` 中且 `data: null`。
+失败时仍保留 HTTP 状态码，响应体是 `Error` 信封，且永远不含 `data` 字段：
+
+```json
+{
+  "code": 400,
+  "message": "invalid request body"
+}
+```
+
+- `code` 与 HTTP 状态码一致。
+- `message` 携带错误描述。
+
 各端点的 `data` 结构见 Swagger（`/v1/swagger`）。
 
 ## Quick start

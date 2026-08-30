@@ -14,9 +14,9 @@ import (
 // @ID          history
 // @Tags        translation
 // @Produce     json
-// @Success     200 {object} response.Envelope{Code=int,Message=string,Data=entity.TranslationHistory}
-// @Failure     401 {object} response.Envelope
-// @Failure     500 {object} response.Envelope
+// @Success     200 {object} response.Ok[entity.TranslationHistory]{Code=int,Message=string,Data=entity.TranslationHistory}
+// @Failure     401 {object} response.Error
+// @Failure     500 {object} response.Error
 // @Security    BearerAuth
 // @Router      /translation/history [get]
 func (r *V1) history(ctx fiber.Ctx) error {
@@ -42,10 +42,10 @@ func (r *V1) history(ctx fiber.Ctx) error {
 // @Accept      json
 // @Produce     json
 // @Param       request body     request.Translate true "Set up translation"
-// @Success     200     {object} response.Envelope{Code=int,Message=string,Data=entity.Translation}
-// @Failure     400     {object} response.Envelope
-// @Failure     401     {object} response.Envelope
-// @Failure     500     {object} response.Envelope
+// @Success     200     {object} response.Ok[entity.Translation]{Code=int,Message=string,Data=entity.Translation}
+// @Failure     400     {object} response.Error
+// @Failure     401     {object} response.Error
+// @Failure     500     {object} response.Error
 // @Security    BearerAuth
 // @Router      /translation/do-translate [post]
 func (r *V1) doTranslate(ctx fiber.Ctx) error {
