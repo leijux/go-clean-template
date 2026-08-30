@@ -3,7 +3,6 @@ package restapi
 import (
 	"net/http"
 
-	"github.com/ansrivas/fiberprometheus/v2"
 	"github.com/evrone/go-clean-template/config"
 	_ "github.com/evrone/go-clean-template/docs" // Swagger docs.
 	"github.com/evrone/go-clean-template/internal/controller/restapi/middleware"
@@ -11,9 +10,10 @@ import (
 	"github.com/evrone/go-clean-template/internal/usecase"
 	"github.com/evrone/go-clean-template/pkg/jwt"
 	"github.com/evrone/go-clean-template/pkg/logger"
-	"github.com/gofiber/contrib/otelfiber/v2"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/swagger"
+	"github.com/gofiber/contrib/v3/otel"
+	"github.com/gofiber/contrib/v3/prometheus"
+	"github.com/gofiber/contrib/v3/swaggerui"
+	"github.com/gofiber/fiber/v3"
 )
 
 // NewRouter -.
@@ -34,24 +34,22 @@ func NewRouter(app *fiber.App, cfg *config.Config, t usecase.Translation, u usec
 
 	// Prometheus metrics
 	if cfg.Metrics.Enabled {
-		prometheus := fiberprometheus.New("my-service-name")
-		prometheus.RegisterAt(app, "/metrics")
-		app.Use(prometheus.Middleware)
+		app.Use(prometheus.New(prometheus.Config{ServiceName: "my-service-name"}))
 	}
 
 	// Swagger
 	if cfg.Swagger.Enabled {
-		app.Get("/swagger/*", swagger.HandlerDefault)
+		app.Use(swaggerui.New(swaggerui.Config{Path: "swagger", FilePath: "./docs/swagger.json"}))
 	}
 
 	// K8s probe
-	app.Get("/healthz", func(ctx *fiber.Ctx) error { return ctx.SendStatus(http.StatusOK) })
+	app.Get("/healthz", func(ctx fiber.Ctx) error { return ctx.SendStatus(http.StatusOK) })
 
 	// Routers
 	apiV1Group := app.Group("/v1")
 	{
 		if cfg.Tracing.Enabled {
-			apiV1Group.Use(otelfiber.Middleware())
+			apiV1Group.Use(otel.Middleware())
 		}
 
 		v1.NewRoutes(apiV1Group, t, u, tk, jwtManager, l)

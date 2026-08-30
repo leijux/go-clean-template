@@ -15,7 +15,7 @@
 [![Query Builder](https://img.shields.io/badge/Squirrel-SQL%20Query%20Builder-blue)](https://github.com/Masterminds/squirrel)
 [![Database Migrations](https://img.shields.io/badge/Migrations-Seamless%20Schema%20Updates-blue)](https://github.com/golang-migrate/migrate)
 [![Logging](https://img.shields.io/badge/ZeroLog-Structured%20Logging-blue)](https://github.com/rs/zerolog)
-[![Metrics](https://img.shields.io/badge/Prometheus-Metrics%20Integration-blue)](https://github.com/ansrivas/fiberprometheus)
+[![Metrics](https://img.shields.io/badge/Prometheus-Metrics%20Integration-blue)](https://github.com/gofiber/contrib/tree/main/v3/prometheus)
 [![Tracing](https://img.shields.io/badge/OpenTelemetry-Distributed%20Tracing-blue)](https://opentelemetry.io/)
 [![Testing](https://img.shields.io/badge/Testify-Testing%20Framework-blue)](https://github.com/stretchr/testify)
 [![Mocking](https://img.shields.io/badge/Mock-Mocking%20Library-blue)](https://go.uber.org/mock)
@@ -160,7 +160,7 @@ make compose-up-all
 OTLP/gRPC в коллектор — [Jaeger](https://www.jaegertracing.io/) в docker-стеке.
 
 - **Проброс контекста** — W3C `traceparent` + `baggage`, поэтому один трейс охватывает все четыре транспорта. REST
-  использует middleware [otelfiber](https://github.com/gofiber/contrib/tree/main/otelfiber), gRPC — stats handler
+  использует middleware [otel](https://github.com/gofiber/contrib/tree/main/v3/otel), gRPC — stats handler
   [otelgrpc](https://github.com/open-telemetry/opentelemetry-go-contrib), а AMQP RPC / NATS RPC переносят trace-контекст
   в заголовках сообщений через собственные carrier'ы (`pkg/rabbitmq/rmq_rpc/otel_carrier.go`,
   `pkg/nats/nats_rpc/otel_carrier.go`).

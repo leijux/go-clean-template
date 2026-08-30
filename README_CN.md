@@ -15,7 +15,7 @@ golang服务的整洁架构模板
 [![Query Builder](https://img.shields.io/badge/Squirrel-SQL%20Query%20Builder-blue)](https://github.com/Masterminds/squirrel)
 [![Database Migrations](https://img.shields.io/badge/Migrations-Seamless%20Schema%20Updates-blue)](https://github.com/golang-migrate/migrate)
 [![Logging](https://img.shields.io/badge/ZeroLog-Structured%20Logging-blue)](https://github.com/rs/zerolog)
-[![Metrics](https://img.shields.io/badge/Prometheus-Metrics%20Integration-blue)](https://github.com/ansrivas/fiberprometheus)
+[![Metrics](https://img.shields.io/badge/Prometheus-Metrics%20Integration-blue)](https://github.com/gofiber/contrib/tree/main/v3/prometheus)
 [![Tracing](https://img.shields.io/badge/OpenTelemetry-Distributed%20Tracing-blue)](https://opentelemetry.io/)
 [![Testing](https://img.shields.io/badge/Testify-Testing%20Framework-blue)](https://github.com/stretchr/testify)
 [![Mocking](https://img.shields.io/badge/Mock-Mocking%20Library-blue)](https://go.uber.org/mock)
@@ -160,7 +160,7 @@ Check services:
 [Jaeger](https://www.jaegertracing.io/)。
 
 - **上下文传播** —— W3C `traceparent` + `baggage`，因此单条链路可贯穿全部四种传输协议。REST 使用
-  [otelfiber](https://github.com/gofiber/contrib/tree/main/otelfiber) 中间件，gRPC 使用
+  [otel](https://github.com/gofiber/contrib/tree/main/v3/otel) 中间件，gRPC 使用
   [otelgrpc](https://github.com/open-telemetry/opentelemetry-go-contrib) stats handler，AMQP RPC / NATS RPC 则通过自定义
   carrier 将 trace 上下文携带在消息头中（`pkg/rabbitmq/rmq_rpc/otel_carrier.go`、
   `pkg/nats/nats_rpc/otel_carrier.go`）。

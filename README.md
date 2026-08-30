@@ -18,7 +18,7 @@ Clean Architecture template for Golang services
 [![Query Builder](https://img.shields.io/badge/Squirrel-SQL%20Query%20Builder-blue)](https://github.com/Masterminds/squirrel)
 [![Database Migrations](https://img.shields.io/badge/Migrations-Seamless%20Schema%20Updates-blue)](https://github.com/golang-migrate/migrate)
 [![Logging](https://img.shields.io/badge/ZeroLog-Structured%20Logging-blue)](https://github.com/rs/zerolog)
-[![Metrics](https://img.shields.io/badge/Prometheus-Metrics%20Integration-blue)](https://github.com/ansrivas/fiberprometheus)
+[![Metrics](https://img.shields.io/badge/Prometheus-Metrics%20Integration-blue)](https://github.com/gofiber/contrib/tree/main/v3/prometheus)
 [![Tracing](https://img.shields.io/badge/OpenTelemetry-Distributed%20Tracing-blue)](https://opentelemetry.io/)
 [![Testing](https://img.shields.io/badge/Testify-Testing%20Framework-blue)](https://github.com/stretchr/testify)
 [![Mocking](https://img.shields.io/badge/Mock-Mocking%20Library-blue)](https://go.uber.org/mock)
@@ -165,7 +165,7 @@ Distributed tracing is provided by [OpenTelemetry](https://opentelemetry.io/). S
 collector — [Jaeger](https://www.jaegertracing.io/) in the docker stack.
 
 - **Context propagation** — W3C `traceparent` + `baggage`, so a single trace spans all four transports. REST uses
-  the [otelfiber](https://github.com/gofiber/contrib/tree/main/otelfiber) middleware, gRPC uses the
+  the [otel](https://github.com/gofiber/contrib/tree/main/v3/otel) middleware, gRPC uses the
   [otelgrpc](https://github.com/open-telemetry/opentelemetry-go-contrib) stats handler, and AMQP RPC / NATS RPC carry the
   trace context in message headers via custom carriers (`pkg/rabbitmq/rmq_rpc/otel_carrier.go`,
   `pkg/nats/nats_rpc/otel_carrier.go`).
