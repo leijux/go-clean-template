@@ -3,10 +3,10 @@ package v1
 import (
 	"net/http"
 
-	"github.com/evrone/go-clean-template/internal/controller/restapi/v1/request"
-	_ "github.com/evrone/go-clean-template/internal/controller/restapi/v1/response" // for swaggo
-	"github.com/evrone/go-clean-template/internal/entity"
 	"github.com/gofiber/fiber/v3"
+	"github.com/leijux/go-clean-template/internal/controller/restapi/v1/request"
+	_ "github.com/leijux/go-clean-template/internal/controller/restapi/v1/response" // for swaggo
+	"github.com/leijux/go-clean-template/internal/entity"
 )
 
 // @Summary     Show history
@@ -14,9 +14,9 @@ import (
 // @ID          history
 // @Tags        translation
 // @Produce     json
-// @Success     200 {object} entity.TranslationHistory
-// @Failure     401 {object} response.Error
-// @Failure     500 {object} response.Error
+// @Success     200 {object} response.Envelope{Code=int,Message=string,Data=entity.TranslationHistory}
+// @Failure     401 {object} response.Envelope
+// @Failure     500 {object} response.Envelope
 // @Security    BearerAuth
 // @Router      /translation/history [get]
 func (r *V1) history(ctx fiber.Ctx) error {
@@ -32,7 +32,7 @@ func (r *V1) history(ctx fiber.Ctx) error {
 		return errorResponse(ctx, http.StatusInternalServerError, "database problems")
 	}
 
-	return ctx.Status(http.StatusOK).JSON(translationHistory)
+	return okResponse(ctx, http.StatusOK, translationHistory)
 }
 
 // @Summary     Translate
@@ -42,10 +42,10 @@ func (r *V1) history(ctx fiber.Ctx) error {
 // @Accept      json
 // @Produce     json
 // @Param       request body     request.Translate true "Set up translation"
-// @Success     200     {object} entity.Translation
-// @Failure     400     {object} response.Error
-// @Failure     401     {object} response.Error
-// @Failure     500     {object} response.Error
+// @Success     200     {object} response.Envelope{Code=int,Message=string,Data=entity.Translation}
+// @Failure     400     {object} response.Envelope
+// @Failure     401     {object} response.Envelope
+// @Failure     500     {object} response.Envelope
 // @Security    BearerAuth
 // @Router      /translation/do-translate [post]
 func (r *V1) doTranslate(ctx fiber.Ctx) error {
@@ -83,5 +83,5 @@ func (r *V1) doTranslate(ctx fiber.Ctx) error {
 		return errorResponse(ctx, http.StatusInternalServerError, "translation service problems")
 	}
 
-	return ctx.Status(http.StatusOK).JSON(translation)
+	return okResponse(ctx, http.StatusOK, translation)
 }

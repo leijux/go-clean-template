@@ -101,28 +101,48 @@ CRUD-операции со стейт-машиной статусов.
 | Перевод  | `POST /v1/translation/do-translate` | `TranslationHistoryService/DoTranslate` |
 | История  | `GET /v1/translation/history`       | `TranslationHistoryService/ShowHistory` |
 
+### Единый формат ответа
+
+Все REST-эндпоинты возвращают один и тот же JSON-конверт (envelope):
+
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": { }
+}
+```
+
+- `code` повторяет HTTP-код ответа.
+- `message` — краткое описание: `"ok"` при успехе, текст ошибки при неудаче.
+- `data` — полезная нагрузка: бизнес-объект при успехе (`null` для операций без тела, например
+  удаление), и `null` при ошибке.
+
+При ошибке HTTP-код сохраняется, а описание ошибки передаётся в `message` с `data: null`.
+Схемы `data` по каждому эндпоинту см. в Swagger (`/v1/swagger`).
+
 ## Быстрый старт
 
 ### Локальная разработка
 
 ```sh
 # Postgres, RabbitMQ, NATS
-make compose-up
+task compose-up
 # Запуск приложения и миграций
-make run
+task run
 ```
 
 ### Интеграционные тесты (может быть использовано с CI)
 
 ```sh
 # DB, app + migrations, integration tests
-make compose-up-integration-test
+task compose-up-integration-test
 ```
 
 ### Весь docker stack с reverse proxy
 
 ```sh
-make compose-up-all 
+task compose-up-all 
 ```
 
 Проверьте сервисы:
@@ -183,6 +203,12 @@ OTLP/gRPC в коллектор — [Jaeger](https://www.jaegertracing.io/) в d
 | `TRACING_SAMPLE_RATE`   | `0.1`              | Parent-based коэффициент сэмплирования |
 
 ## Структура проекта
+
+### `frontend`
+
+React (TypeScript + Vite) веб-приложение, потребляющее описанный ниже REST API. См.
+[frontend/README.md](frontend/README.md) по настройке и полному соответствию эндпоинтов. В разработке
+`npm run dev` проксирует запросы `/v1` на REST API по адресу `localhost:8080`.
 
 ### `cmd/app/main.go`
 
@@ -323,11 +349,11 @@ routes := make(map[string]server.CallHandler)
 ```go
 apiV1Group := app.Group("/v1")
 {
-	v1.NewRoutes(apiV1Group, t, u, tk, jwtManager, l)
+	v1.NewRoutes(apiV1Group, t, u, tk, []byte(cfg.JWT.Secret), l)
 }
 apiV2Group := app.Group("/v2")
 {
-	v2.NewRoutes(apiV2Group, t, u, tk, jwtManager, l)
+	v2.NewRoutes(apiV2Group, t, u, tk, []byte(cfg.JWT.Secret), l)
 }
 ```
 

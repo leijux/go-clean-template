@@ -44,25 +44,43 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.Token"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/v1.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Code": {
+                                            "type": "integer"
+                                        },
+                                        "Data": {
+                                            "$ref": "#/definitions/v1.Token"
+                                        },
+                                        "Message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     }
                 }
@@ -97,25 +115,43 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/entity.User"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/v1.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Code": {
+                                            "type": "integer"
+                                        },
+                                        "Data": {
+                                            "$ref": "#/definitions/entity.User"
+                                        },
+                                        "Message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     }
                 }
@@ -163,19 +199,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.TaskList"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/v1.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Code": {
+                                            "type": "integer"
+                                        },
+                                        "Data": {
+                                            "$ref": "#/definitions/v1.TaskList"
+                                        },
+                                        "Message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     }
                 },
@@ -213,25 +267,43 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/entity.Task"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/v1.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Code": {
+                                            "type": "integer"
+                                        },
+                                        "Data": {
+                                            "$ref": "#/definitions/entity.Task"
+                                        },
+                                        "Message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     }
                 },
@@ -266,31 +338,49 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Task"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/v1.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Code": {
+                                            "type": "integer"
+                                        },
+                                        "Data": {
+                                            "$ref": "#/definitions/entity.Task"
+                                        },
+                                        "Message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     }
                 },
@@ -335,37 +425,55 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Task"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/v1.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Code": {
+                                            "type": "integer"
+                                        },
+                                        "Data": {
+                                            "$ref": "#/definitions/entity.Task"
+                                        },
+                                        "Message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     }
                 },
@@ -392,25 +500,46 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/v1.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Code": {
+                                            "type": "integer"
+                                        },
+                                        "Data": {
+                                            "type": "object"
+                                        },
+                                        "Message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     }
                 },
@@ -457,37 +586,55 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Task"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/v1.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Code": {
+                                            "type": "integer"
+                                        },
+                                        "Data": {
+                                            "$ref": "#/definitions/entity.Task"
+                                        },
+                                        "Message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     }
                 },
@@ -527,25 +674,43 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Translation"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/v1.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Code": {
+                                            "type": "integer"
+                                        },
+                                        "Data": {
+                                            "$ref": "#/definitions/entity.Translation"
+                                        },
+                                        "Message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     }
                 },
@@ -571,19 +736,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.TranslationHistory"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/v1.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Code": {
+                                            "type": "integer"
+                                        },
+                                        "Data": {
+                                            "$ref": "#/definitions/entity.TranslationHistory"
+                                        },
+                                        "Message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     }
                 },
@@ -609,25 +792,43 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.User"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/v1.Envelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Code": {
+                                            "type": "integer"
+                                        },
+                                        "Data": {
+                                            "$ref": "#/definitions/entity.User"
+                                        },
+                                        "Message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/v1.Error"
+                            "$ref": "#/definitions/v1.Envelope"
                         }
                     }
                 },
@@ -765,12 +966,17 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.Error": {
+        "v1.Envelope": {
             "type": "object",
             "properties": {
-                "error": {
+                "code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "data": {},
+                "message": {
                     "type": "string",
-                    "example": "message"
+                    "example": "ok"
                 }
             }
         },

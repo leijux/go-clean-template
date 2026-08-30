@@ -101,28 +101,47 @@ CRUD 操作，支持状态状态机。
 | 翻译 | `POST /v1/translation/do-translate` | `TranslationHistoryService/DoTranslate` |
 | 历史 | `GET /v1/translation/history`       | `TranslationHistoryService/ShowHistory` |
 
+### 统一响应格式
+
+所有 REST 端点返回相同的 JSON 信封（envelope）：
+
+```json
+{
+  "code": 200,
+  "message": "ok",
+  "data": { }
+}
+```
+
+- `code` 与 HTTP 状态码一致。
+- `message` 为简短说明：成功时为 `"ok"`，失败时为错误描述。
+- `data` 为载荷：成功时为业务对象（无返回体的操作如删除则为 `null`），失败时为 `null`。
+
+失败时仍保留 HTTP 状态码，错误描述放在 `message` 中且 `data: null`。
+各端点的 `data` 结构见 Swagger（`/v1/swagger`）。
+
 ## Quick start
 
 ### Local development
 
 ```sh
 # Postgres, RabbitMQ, NATS
-make compose-up
+task compose-up
 # Run app with migrations
-make run
+task run
 ```
 
 ### Integration tests (can be run in CI)
 
 ```sh
 # DB, app + migrations, integration tests
-make compose-up-integration-test
+task compose-up-integration-test
 ```
 
 ### Full docker stack with reverse proxy
 
 ```sh
-make compose-up-all 
+task compose-up-all 
 ```
 
 Check services:
@@ -180,6 +199,12 @@ Check services:
 | `TRACING_SAMPLE_RATE`   | `0.1`              | parent-based 采样比例       |
 
 ## 工程架构
+
+### `frontend`
+
+使用 React（TypeScript + Vite）构建的 Web 前端，对接下文所述的 REST API。配置方式与完整的端点映射见
+[frontend/README.md](frontend/README.md)。开发模式下 `npm run dev` 会将 `/v1` 请求代理到
+`localhost:8080` 的 REST API。
 
 ### `cmd/app/main.go`
 
@@ -316,11 +341,11 @@ routes := make(map[string]server.CallHandler)
 ```go
 apiV1Group := app.Group("/v1")
 {
-	v1.NewRoutes(apiV1Group, t, u, tk, jwtManager, l)
+	v1.NewRoutes(apiV1Group, t, u, tk, []byte(cfg.JWT.Secret), l)
 }
 apiV2Group := app.Group("/v2")
 {
-	v2.NewRoutes(apiV2Group, t, u, tk, jwtManager, l)
+	v2.NewRoutes(apiV2Group, t, u, tk, []byte(cfg.JWT.Secret), l)
 }
 ```
 

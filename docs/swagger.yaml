@@ -88,10 +88,14 @@ definitions:
     required:
     - title
     type: object
-  v1.Error:
+  v1.Envelope:
     properties:
-      error:
-        example: message
+      code:
+        example: 200
+        type: integer
+      data: {}
+      message:
+        example: ok
         type: string
     type: object
   v1.Login:
@@ -210,19 +214,28 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.Token'
+            allOf:
+            - $ref: '#/definitions/v1.Envelope'
+            - properties:
+                Code:
+                  type: integer
+                Data:
+                  $ref: '#/definitions/v1.Token'
+                Message:
+                  type: string
+              type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
       summary: Login
       tags:
       - auth
@@ -245,19 +258,28 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/entity.User'
+            allOf:
+            - $ref: '#/definitions/v1.Envelope'
+            - properties:
+                Code:
+                  type: integer
+                Data:
+                  $ref: '#/definitions/entity.User'
+                Message:
+                  type: string
+              type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
       summary: Register
       tags:
       - auth
@@ -290,15 +312,24 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.TaskList'
+            allOf:
+            - $ref: '#/definitions/v1.Envelope'
+            - properties:
+                Code:
+                  type: integer
+                Data:
+                  $ref: '#/definitions/v1.TaskList'
+                Message:
+                  type: string
+              type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
       security:
       - BearerAuth: []
       summary: List tasks
@@ -322,19 +353,28 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/entity.Task'
+            allOf:
+            - $ref: '#/definitions/v1.Envelope'
+            - properties:
+                Code:
+                  type: integer
+                Data:
+                  $ref: '#/definitions/entity.Task'
+                Message:
+                  type: string
+              type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
       security:
       - BearerAuth: []
       summary: Create task
@@ -351,20 +391,31 @@ paths:
         required: true
         type: string
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/v1.Envelope'
+            - properties:
+                Code:
+                  type: integer
+                Data:
+                  type: object
+                Message:
+                  type: string
+              type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
       security:
       - BearerAuth: []
       summary: Delete task
@@ -385,23 +436,32 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.Task'
+            allOf:
+            - $ref: '#/definitions/v1.Envelope'
+            - properties:
+                Code:
+                  type: integer
+                Data:
+                  $ref: '#/definitions/entity.Task'
+                Message:
+                  type: string
+              type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
       security:
       - BearerAuth: []
       summary: Get task
@@ -430,27 +490,36 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.Task'
+            allOf:
+            - $ref: '#/definitions/v1.Envelope'
+            - properties:
+                Code:
+                  type: integer
+                Data:
+                  $ref: '#/definitions/entity.Task'
+                Message:
+                  type: string
+              type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
       security:
       - BearerAuth: []
       summary: Update task
@@ -481,27 +550,36 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.Task'
+            allOf:
+            - $ref: '#/definitions/v1.Envelope'
+            - properties:
+                Code:
+                  type: integer
+                Data:
+                  $ref: '#/definitions/entity.Task'
+                Message:
+                  type: string
+              type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
       security:
       - BearerAuth: []
       summary: Transition task status
@@ -526,19 +604,28 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.Translation'
+            allOf:
+            - $ref: '#/definitions/v1.Envelope'
+            - properties:
+                Code:
+                  type: integer
+                Data:
+                  $ref: '#/definitions/entity.Translation'
+                Message:
+                  type: string
+              type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
       security:
       - BearerAuth: []
       summary: Translate
@@ -554,15 +641,24 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.TranslationHistory'
+            allOf:
+            - $ref: '#/definitions/v1.Envelope'
+            - properties:
+                Code:
+                  type: integer
+                Data:
+                  $ref: '#/definitions/entity.TranslationHistory'
+                Message:
+                  type: string
+              type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
       security:
       - BearerAuth: []
       summary: Show history
@@ -578,19 +674,28 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.User'
+            allOf:
+            - $ref: '#/definitions/v1.Envelope'
+            - properties:
+                Code:
+                  type: integer
+                Data:
+                  $ref: '#/definitions/entity.User'
+                Message:
+                  type: string
+              type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/v1.Error'
+            $ref: '#/definitions/v1.Envelope'
       security:
       - BearerAuth: []
       summary: Get profile
