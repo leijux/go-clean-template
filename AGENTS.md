@@ -2,48 +2,49 @@
 
 Go clean-architecture reference service. Three domains (`user`, `task`, `translation`) exposed
 over four transports (REST/Fiber, gRPC, RabbitMQ RPC, NATS RPC) from one shared use-case layer.
-Module path: `github.com/evrone/go-clean-template`. The Go version is declared in `go.mod`.
+Module path: `github.com/leijux/go-clean-template`. The Go version is declared in `go.mod`.
 
-## Commands — drive everything through the Makefile
+## Commands — drive everything through the Taskfile
 
-The `Makefile` loads `.env` (falling back to `.env.example`) and exports it into every target, and
+The `Taskfile.yml` loads `.env` (falling back to `.env.example`) and exports it into every target, and
 several targets carry flags that matter. Running the underlying tool directly means running it with
 different settings than CI. Use the target, not the tool.
 
 | Task | Use this | Not this |
 | --- | --- | --- |
-| Install tool binaries (`swag`, `mockgen`, `migrate`, linters) | `make bin-deps` | `go install ...` |
-| Unit tests | `make test` | `go test ./...` — the target adds `-race -covermode atomic` and scopes to `./internal/... ./pkg/...` |
-| Integration tests | `make compose-up-integration-test` | `make integration-test` — see below |
-| Lint | `make linter-golangci` | `golangci-lint run` |
-| Format | `make format` | `gofmt` — the target runs `go fix`, `gofumpt`, and `gci` with the repo's import grouping |
-| Regenerate mocks | `make mock` | `mockgen ...` |
-| Regenerate Swagger | `make swag-v1` | `swag init` — the target passes `--parseDependency -g internal/controller/restapi/router.go` |
-| Regenerate protobuf | `make proto-v1` | `protoc ...` |
-| Tidy / verify modules | `make deps` | `go mod tidy` |
-| Vulnerability scan | `make deps-audit` | `govulncheck ./...` |
-| Start dependencies (Postgres, RabbitMQ, NATS) | `make compose-up` | `docker compose up` |
-| Start the whole stack including the app | `make compose-up-all` | `docker compose up` |
-| Tear down | `make compose-down` | `docker compose down` |
-| Run the app locally | `make run` | `go run ./cmd/app` — the target regenerates docs and builds with `-tags migrate` |
-| Create a migration | `make migrate-create <name>` | `migrate create ...` |
-| Apply migrations | `make migrate-up` | `migrate -path ... up` |
-| Full check before pushing | `make pre-commit` | running the steps by hand |
+| Install tool binaries (`swag`, `mockgen`, `migrate`, linters) | `task bin-deps` | `go install ...` |
+| Unit tests | `task test` | `go test ./...` — the target adds `-race -covermode atomic` and scopes to `./internal/... ./pkg/...` |
+| Integration tests | `task compose-up-integration-test` | `task integration-test` — see below |
+| Lint | `task linter-golangci` | `golangci-lint run` |
+| Format | `task format` | `gofmt` — the target runs `go fix`, `gofumpt`, and `gci` with the repo's import grouping |
+| Regenerate mocks | `task mock` | `mockgen ...` |
+| Regenerate Swagger | `task swag-v1` | `swag init` — the target passes `--parseDependency -g internal/controller/restapi/router.go` |
+| Regenerate protobuf | `task proto-v1` | `protoc ...` |
+| Tidy / verify modules | `task deps` | `go mod tidy` |
+| Vulnerability scan | `task deps-audit` | `govulncheck ./...` |
+| Start dependencies (Postgres, RabbitMQ, NATS) | `task compose-up` | `docker compose up` |
+| Start the whole stack including the app | `task compose-up-all` | `docker compose up` |
+| Tear down | `task compose-down` | `docker compose down` |
+| Run the app locally | `task run` | `go run ./cmd/app` — the target regenerates docs and builds with `-tags migrate` |
+| Create a migration | `task migrate-create -- <name>` | `migrate create ...` |
+| Apply migrations | `task migrate-up` | `migrate -path ... up` |
+| Full check before pushing | `task pre-commit` | running the steps by hand |
 
-`make help` lists every target.
+`task help` lists every target.
 
 Three traps in these targets:
 
-- **`make integration-test` is not the one you want.** It runs `go test ./integration-test/...` on
+- **`task integration-test` is not the one you want.** It runs `go test ./integration-test/...` on
   the host, where the suite cannot resolve the container hostnames it needs, so it always fails.
-  `make compose-up-integration-test` is the real entry point.
-- **`make migrate-create <name>` prints an error after it succeeds.** The target reads the name via
-  `$(word 2,$(MAKECMDGOALS))`, so `make` then tries to build `<name>` as a target and reports
-  `No rule to make target`. The migration files are already created; ignore that line.
-- **`make run` and `make pre-commit` depend on `swag-v1` and `proto-v1`**, so they need `swag` and
-  `protoc` on `PATH`. Run `make bin-deps` first (`protoc` itself is not installed by it).
+  `task compose-up-integration-test` is the real entry point.
+- **`task migrate-create` takes the name after `--`.** The target forwards `{{.CLI_ARGS}}` to
+  `migrate create`, so run it as `task migrate-create -- <name>`. Omitting the `--` separator causes
+  Task to pass the name as a task argument in an unexpected way; the migration files are still
+  created either way.
+- **`task run` and `task pre-commit` depend on `swag-v1` and `proto-v1`**, so they need `swag` and
+  `protoc` on `PATH`. Run `task bin-deps` first (`protoc` itself is not installed by it).
 
-Never claim a change is done without `make format`, `make linter-golangci` and `make test` passing.
+Never claim a change is done without `task format`, `task linter-golangci` and `task test` passing.
 
 ## Dependency rule
 
@@ -131,7 +132,7 @@ three places: the interface, the struct, and the `traced*` decorator. Skipping t
 compile error that reads as an unrelated interface mismatch.
 
 **Mocks are generated, not written.** `internal/usecase/mocks_*_test.go` come from `go:generate`
-directives in the two `contracts.go` files. After any contract change run `make mock` before
+directives in the two `contracts.go` files. After any contract change run `task mock` before
 running tests.
 
 **Error style.** Domain failures are sentinel errors in `internal/entity/errors.go`
@@ -153,10 +154,10 @@ around blocks), `funlen` (65 lines / 40 statements), `gocyclo` (10), `gocognit` 
 
 ## Generated files — do not hand-edit
 
-- `docs/docs.go`, `docs/swagger.json`, `docs/swagger.yaml` ← `make swag-v1`, driven by the
+- `docs/docs.go`, `docs/swagger.json`, `docs/swagger.yaml` ← `task swag-v1`, driven by the
   annotation comments above REST handlers and on `NewRouter` in `internal/controller/restapi/router.go`.
-- `docs/proto/v1/*.pb.go` ← `make proto-v1` from the `.proto` files beside them.
-- `internal/usecase/mocks_*_test.go` ← `make mock`.
+- `docs/proto/v1/*.pb.go` ← `task proto-v1` from the `.proto` files beside them.
+- `internal/usecase/mocks_*_test.go` ← `task mock`.
 
 ## READMEs must be updated as a set
 
@@ -173,12 +174,12 @@ Update all three whenever a change touches what they document:
 | New domain | the `Overview` bullet list, `Content` index, and a new `Domains` subsection |
 | New or renamed env var | the config table under `Observability` if tracing-related; otherwise the `config` section |
 | New transport, server, port or service URL | the `Quick start` service list |
-| New `make` target used in the getting-started flow | the `Quick start` code blocks |
+| New `task` target used in the getting-started flow | the `Quick start` code blocks |
 | Renamed or moved package under `internal/` or `pkg/` | the matching `Project structure` subsection |
 
 Rules for the translations:
 
-- Translate the prose; leave identifiers, paths, `make` targets, URLs, env var names, code blocks
+- Translate the prose; leave identifiers, paths, `task` targets, URLs, env var names, code blocks
   and route strings verbatim in English.
 - Headings are translated, so the `Content` index anchors are localized too (`#домены`, `#领域`).
   Adding or renaming a section means updating that file's own anchors — an anchor copied from the
@@ -194,12 +195,12 @@ Rules for the translations:
    `tracing.go`.
 3. If it needs new persistence, repeat the same three steps in `internal/repo/contracts.go`,
    `internal/repo/persistent/<domain>/`, and that package's `tracing.go`.
-4. `make mock`, then extend `internal/usecase/<domain>_test.go` (table-driven, gomock, `t.Parallel()` —
+4. `task mock`, then extend `internal/usecase/<domain>_test.go` (table-driven, gomock, `t.Parallel()` —
    `paralleltest` enforces it).
 5. Expose it on whichever transports need it:
    - REST: handler in `internal/controller/restapi/v1/<domain>.go` + route in that package's
-     `router.go` + swagger annotations, then `make swag-v1`.
-   - gRPC: `.proto` change → `make proto-v1` → controller method in
+     `router.go` + swagger annotations, then `task swag-v1`.
+   - gRPC: `.proto` change → `task proto-v1` → controller method in
      `internal/controller/grpc/v1/`.
    - AMQP / NATS: handler returning a `CallHandler` + a `"v1.<domain>.<action>"` key in the
      transport's `v1/router.go`.
@@ -214,7 +215,7 @@ before writing.
 
 1. **Entity** — `internal/entity/<domain>.go` with the type and its invariants; new sentinel errors
    go in `internal/entity/errors.go`.
-2. **Migration** — `make migrate-create create_<table>`, then fill both the `.up.sql` and the
+2. **Migration** — `task migrate-create -- create_<table>`, then fill both the `.up.sql` and the
    `.down.sql`. A missing down-migration is a review failure.
 3. **Repo contract** — add the interface to `internal/repo/contracts.go`.
 4. **Repo implementation** — `internal/repo/persistent/<domain>/<domain>.go` (`package <domain>`,
@@ -223,14 +224,14 @@ before writing.
 5. **Use-case contract** — add the interface to `internal/usecase/contracts.go`.
 6. **Use-case implementation** — `internal/usecase/<domain>/<domain>.go` plus its `tracing.go`,
    same `New` pattern.
-7. **`make mock`**, then `internal/usecase/<domain>_test.go` against the generated mocks.
+7. **`task mock`**, then `internal/usecase/<domain>_test.go` against the generated mocks.
 8. **Wiring** — add a field to `useCases` in `internal/app/app.go`, construct repo and use case in
    `initUseCases`, and thread the use case through `initServers` into each router you are exposing.
 9. **Transports** — for each one: DTOs in `<transport>/v1/request/` and `response/`, handlers in
    `<transport>/v1/<domain>.go`, registration in that transport's `v1/router.go`, and the use case
    added to the `V1` / controller struct in `<transport>/v1/controller.go`. gRPC also needs
-   `docs/proto/v1/<domain>.proto` and `make proto-v1`.
-10. **Docs** — swagger annotations on the REST handlers, `make swag-v1`, and the README updates
+   `docs/proto/v1/<domain>.proto` and `task proto-v1`.
+10. **Docs** — swagger annotations on the REST handlers, `task swag-v1`, and the README updates
     listed above in all three languages.
 11. **Integration test** — `integration-test/<domain>_test.go` exercising the domain over the
     transports you exposed.
@@ -246,15 +247,15 @@ with worked examples per transport; follow it rather than inventing a scheme.
 ## Database
 
 `migrations/` holds golang-migrate pairs (`<timestamp>_<name>.up.sql` / `.down.sql`). Create with
-`make migrate-create <name>`, apply with `make migrate-up`. The app applies them itself at startup
-only when built with the `migrate` build tag (`internal/app/migrate.go`) — that is what `make run`
+`task migrate-create -- <name>`, apply with `task migrate-up`. The app applies them itself at startup
+only when built with the `migrate` build tag (`internal/app/migrate.go`) — that is what `task run`
 and the Dockerfile do. Queries are built with Squirrel via the embedded `*postgres.Postgres`;
 there is no ORM and no raw string concatenation.
 
 ## Tests
 
-- Unit: `internal/...` and `pkg/...`, run by `make test` with `-race`. Use-case tests use the
+- Unit: `internal/...` and `pkg/...`, run by `task test` with `-race`. Use-case tests use the
   generated gomock mocks, are table-driven, and call `t.Parallel()` (`paralleltest` enforces it).
 - Integration: `integration-test/` runs *inside* the docker network — it resolves the service as
   host `app` and talks to `rabbitmq` / `nats` by container name, so it fails on the host machine.
-  Always run it through `make compose-up-integration-test`.
+  Always run it through `task compose-up-integration-test`.
