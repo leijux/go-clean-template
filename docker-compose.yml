@@ -24,6 +24,8 @@ x-backend-app-environment: &x-backend-app-environment
   # PG
   PG_POOL_MAX: "2"
   PG_URL: "postgres://user:myAwEsOm3pa55@w0rd@db:5432/db"
+  # Redis
+  REDIS_ADDR: "redis:6379"
   # gRPC
   GRPC_PORT: "8081"
   # RMQ
@@ -91,6 +93,18 @@ services:
         aliases:
           - nats.lvh.me
 
+  redis:
+    container_name: redis
+    image: redis:8-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      app_network:
+        aliases:
+          - redis.lvh.me
+
   jaeger:
     container_name: jaeger
     image: jaegertracing/all-in-one:1.76.0
@@ -117,6 +131,7 @@ services:
       - "8081:8081"
     depends_on:
       - db
+      - redis
       - rabbitmq
       - jaeger
     deploy:
@@ -155,5 +170,6 @@ networks:
 
 volumes:
   db_data:
+  redis_data:
   rabbitmq_data:
   nats_data:

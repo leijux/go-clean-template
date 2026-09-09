@@ -15,6 +15,7 @@ import (
 	grpcmw "github.com/leijux/go-clean-template/internal/controller/grpc/middleware"
 	natsrpc "github.com/leijux/go-clean-template/internal/controller/nats_rpc"
 	"github.com/leijux/go-clean-template/internal/controller/restapi"
+	cacheTranslationRepo "github.com/leijux/go-clean-template/internal/repo/cache/translation"
 	persistTaskRepo "github.com/leijux/go-clean-template/internal/repo/persistent/task"
 	persistTranslationRepo "github.com/leijux/go-clean-template/internal/repo/persistent/translation"
 	persistUserRepo "github.com/leijux/go-clean-template/internal/repo/persistent/user"
@@ -30,6 +31,7 @@ import (
 	natsRPCServer "github.com/leijux/go-clean-template/pkg/nats/nats_rpc/server"
 	"github.com/leijux/go-clean-template/pkg/postgres"
 	rmqRPCServer "github.com/leijux/go-clean-template/pkg/rabbitmq/rmq_rpc/server"
+	"github.com/leijux/go-clean-template/pkg/redis"
 	"github.com/leijux/go-clean-template/pkg/tracing"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	pbgrpc "google.golang.org/grpc"
@@ -48,15 +50,16 @@ type servers struct {
 	http *httpserver.Server
 }
 
-func initUseCases(pg *postgres.Postgres, jwtManager *jwt.Manager) useCases {
+func initUseCases(pg *postgres.Postgres, rdb *redis.Redis, jwtManager *jwt.Manager) useCases {
 	translationRepo := persistTranslationRepo.New(pg)
+	translationCache := cacheTranslationRepo.New(rdb.Client)
 	taskRepo := persistTaskRepo.New(pg)
 	userRepo := persistUserRepo.New(pg)
 
 	return useCases{
 		user:        user.New(userRepo, jwtManager),
 		task:        task.New(taskRepo),
-		translation: translation.New(translationRepo, webapi.New()),
+		translation: translation.New(translationRepo, webapi.New(), translationCache),
 	}
 }
 
@@ -178,10 +181,21 @@ func Run(cfg *config.Config) error {
 	}
 	defer pg.Close()
 
+	// Cache
+	rdb, err := redis.New(cfg.Redis.Addr, cfg.Redis.Password, cfg.Redis.DB)
+	if err != nil {
+		return fmt.Errorf("app - Run - redis.New: %w", err)
+	}
+	defer func() {
+		if err := rdb.Close(); err != nil {
+			l.Error("app - Run - redis.Close", "error", err)
+		}
+	}()
+
 	// JWT
 	jwtManager := jwt.New(cfg.JWT.Secret, cfg.JWT.TokenExpiry)
 
-	uc := initUseCases(pg, jwtManager)
+	uc := initUseCases(pg, rdb, jwtManager)
 
 	s, err := initServers(cfg, uc, jwtManager, l)
 	if err != nil {

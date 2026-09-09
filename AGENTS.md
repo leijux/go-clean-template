@@ -22,7 +22,7 @@ different settings than CI. Use the target, not the tool.
 | Regenerate protobuf | `task proto-v1` | `protoc ...` |
 | Tidy / verify modules | `task deps` | `go mod tidy` |
 | Vulnerability scan | `task deps-audit` | `govulncheck ./...` |
-| Start dependencies (Postgres, RabbitMQ, NATS) | `task compose-up` | `docker compose up` |
+| Start dependencies (Postgres, Redis, RabbitMQ, NATS) | `task compose-up` | `docker compose up` |
 | Start the whole stack including the app | `task compose-up-all` | `docker compose up` |
 | Tear down | `task compose-down` | `docker compose down` |
 | Run the app locally | `task run` | `go run ./cmd/app` — the target regenerates docs and builds with `-tags migrate` |
@@ -58,7 +58,8 @@ cmd/app → internal/app → internal/controller/*  ─┐
 - `internal/usecase/contracts.go` — the interfaces controllers call. `internal/usecase/<domain>/`
   implements them.
 - `internal/repo/contracts.go` — the interfaces use cases call. `internal/repo/persistent/<domain>/`
-  (Postgres) and `internal/repo/webapi/` (outbound HTTP) implement them.
+  (Postgres), `internal/repo/cache/<domain>/` (Redis) and `internal/repo/webapi/` (outbound HTTP)
+  implement them.
 - `internal/controller/<transport>/v1/` — one package per transport, each with its own
   `request/` and `response/` DTOs. Controllers never import each other.
 - `pkg/` — transport-agnostic infrastructure (servers, logger, jwt, postgres, tracing). Must not
@@ -76,6 +77,7 @@ Decide by asking what the code knows about:
 | nothing but the domain | `internal/entity/<name>.go` | struct + methods (`Task.Transition`, `TaskStatus.Valid`) |
 | a domain rule that spans repositories | `internal/usecase/<domain>/<domain>.go` | method on `UseCase` |
 | SQL, a table, a driver error code | `internal/repo/persistent/<domain>/<domain>.go` | method on `Repo` |
+| a Redis key, TTL or cache hit | `internal/repo/cache/<domain>/<domain>.go` | method on `Repo` |
 | an outbound HTTP API | `internal/repo/webapi/<name>.go` | method on the webapi struct |
 | an HTTP status, a gRPC code, a message envelope | `internal/controller/<transport>/v1/<domain>.go` | handler |
 | a server, pool, client or middleware with no domain knowledge | `pkg/<name>/` | reusable package |
@@ -83,7 +85,8 @@ Decide by asking what the code knows about:
 Layout rules:
 
 - One file per domain per layer, named after the domain (`task.go`, `user.go`, `translation.go`),
-  plus a `tracing.go` in every `usecase/<domain>/` and `repo/persistent/<domain>/` package.
+  plus a `tracing.go` in every `usecase/<domain>/`, `repo/persistent/<domain>/` and
+  `repo/cache/<domain>/` package.
 - Package name matches the directory name. `internal/repo/persistent/translation/` is the one
   violation in the tree — it declares `package persistent`, which is why `internal/app/app.go`
   imports the three repositories under aliases. Follow `task/` and `user/`, not `translation/`.

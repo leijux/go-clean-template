@@ -13,6 +13,7 @@ type (
 		HTTP    http
 		Log     log
 		PG      pg
+		Redis   redis
 		GRPC    grpc
 		RMQ     rmq
 		NATS    nats
@@ -44,6 +45,13 @@ type (
 	pg struct {
 		PoolMax int    `env:"PG_POOL_MAX,required"`
 		URL     string `env:"PG_URL,required"`
+	}
+
+	// Redis -.
+	redis struct {
+		Addr     string `env:"REDIS_ADDR,required"`
+		Password string `env:"REDIS_PASSWORD"`
+		DB       int    `env:"REDIS_DB" envDefault:"0"`
 	}
 
 	// GRPC -.

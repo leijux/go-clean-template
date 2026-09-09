@@ -21,6 +21,12 @@ type (
 		Translate(ctx context.Context, t entity.Translation) (entity.Translation, error)
 	}
 
+	// TranslationCache -.
+	TranslationCache interface {
+		Get(ctx context.Context, userID string, t entity.Translation) (entity.Translation, bool, error)
+		Set(ctx context.Context, userID string, t entity.Translation) error
+	}
+
 	// UserRepo -.
 	UserRepo interface {
 		Store(ctx context.Context, user *entity.User) error

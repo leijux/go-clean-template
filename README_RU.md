@@ -138,7 +138,7 @@ CRUD-операции со стейт-машиной статусов.
 ### Локальная разработка
 
 ```sh
-# Postgres, RabbitMQ, NATS
+# Postgres, Redis, RabbitMQ, NATS
 task compose-up
 # Запуск приложения и миграций
 task run
@@ -177,6 +177,8 @@ task compose-up-all
   - [v1/translation.history.proto](docs/proto/v1/translation.history.proto)
 - PostgreSQL:
   - `postgres://user:myAwEsOm3pa55@w0rd@127.0.0.1:5432/db`
+- Redis:
+  - `redis://127.0.0.1:6379`
 - RabbitMQ:
   - http://rabbitmq.lvh.me | http://127.0.0.1:15672
   - Credentials: `guest` / `guest`

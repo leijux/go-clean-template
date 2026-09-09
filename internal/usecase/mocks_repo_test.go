@@ -110,6 +110,60 @@ func (mr *MockTranslationWebAPIMockRecorder) Translate(ctx, t any) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Translate", reflect.TypeOf((*MockTranslationWebAPI)(nil).Translate), ctx, t)
 }
 
+// MockTranslationCache is a mock of TranslationCache interface.
+type MockTranslationCache struct {
+	ctrl     *gomock.Controller
+	recorder *MockTranslationCacheMockRecorder
+	isgomock struct{}
+}
+
+// MockTranslationCacheMockRecorder is the mock recorder for MockTranslationCache.
+type MockTranslationCacheMockRecorder struct {
+	mock *MockTranslationCache
+}
+
+// NewMockTranslationCache creates a new mock instance.
+func NewMockTranslationCache(ctrl *gomock.Controller) *MockTranslationCache {
+	mock := &MockTranslationCache{ctrl: ctrl}
+	mock.recorder = &MockTranslationCacheMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockTranslationCache) EXPECT() *MockTranslationCacheMockRecorder {
+	return m.recorder
+}
+
+// Get mocks base method.
+func (m *MockTranslationCache) Get(ctx context.Context, userID string, t entity.Translation) (entity.Translation, bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Get", ctx, userID, t)
+	ret0, _ := ret[0].(entity.Translation)
+	ret1, _ := ret[1].(bool)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// Get indicates an expected call of Get.
+func (mr *MockTranslationCacheMockRecorder) Get(ctx, userID, t any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockTranslationCache)(nil).Get), ctx, userID, t)
+}
+
+// Set mocks base method.
+func (m *MockTranslationCache) Set(ctx context.Context, userID string, t entity.Translation) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Set", ctx, userID, t)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Set indicates an expected call of Set.
+func (mr *MockTranslationCacheMockRecorder) Set(ctx, userID, t any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Set", reflect.TypeOf((*MockTranslationCache)(nil).Set), ctx, userID, t)
+}
+
 // MockUserRepo is a mock of UserRepo interface.
 type MockUserRepo struct {
 	ctrl     *gomock.Controller
