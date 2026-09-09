@@ -16,7 +16,7 @@ different settings than CI. Use the target, not the tool.
 | Unit tests | `task test` | `go test ./...` — the target adds `-race -covermode atomic` and scopes to `./internal/... ./pkg/...` |
 | Integration tests | `task compose-up-integration-test` | `task integration-test` — see below |
 | Lint | `task linter-golangci` | `golangci-lint run` |
-| Format | `task format` | `gofmt` — the target runs `go fix`, `gofumpt`, and `gci` with the repo's import grouping |
+| Format | `task format` | `gofmt` — the target runs `go fix` then `golangci-lint fmt`, so formatting and linting share one implementation |
 | Regenerate mocks | `task mock` | `mockgen ...` |
 | Regenerate Swagger | `task swag-v1` | `swag init` — the target passes `--parseDependency -g internal/controller/restapi/router.go` |
 | Regenerate protobuf | `task proto-v1` | `protoc ...` |
@@ -261,3 +261,14 @@ there is no ORM and no raw string concatenation.
 - Integration: `integration-test/` runs *inside* the docker network — it resolves the service as
   host `app` and talks to `rabbitmq` / `nats` by container name, so it fails on the host machine.
   Always run it through `task compose-up-integration-test`.
+
+<!-- CODEGRAPH_START -->
+## CodeGraph
+
+In repositories indexed by CodeGraph (a `.codegraph/` directory exists at the repo root), reach for it BEFORE grep/find or reading files when you need to understand or locate code:
+
+- **MCP tool** (when available): `codegraph_explore` answers most code questions in one call — the relevant symbols' verbatim source plus the call paths between them, including dynamic-dispatch hops grep can't follow. Name a file or symbol in the query to read its current line-numbered source. If it's listed but deferred, load it by name via tool search.
+- **Shell** (always works): `codegraph explore "<symbol names or question>"` prints the same output.
+
+If there is no `.codegraph/` directory, skip CodeGraph entirely — indexing is the user's decision.
+<!-- CODEGRAPH_END -->

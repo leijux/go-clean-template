@@ -31,3 +31,5 @@ build-errors.log
 .reasonix/
 .agents/
 skills-lock.json
+.codegraph/
+logs/

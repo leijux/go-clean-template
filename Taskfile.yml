@@ -74,8 +74,7 @@ tasks:
     desc: Run code formatter
     cmds:
       - go fix ./...
-      - gofumpt -l -w .
-      - gci write . --skip-generated -s standard -s default
+      - golangci-lint fmt ./...
 
   run: ### swag run for API v1 (serial deps: deps, swag-v1, proto-v1)
     desc: swag run for API v1
