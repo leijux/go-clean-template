@@ -1,109 +1,72 @@
+// Package logger provides a slog logger backed by zerolog.
 package logger
 
 import (
-	"fmt"
+	"io"
+	"log/slog"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 
 	"github.com/rs/zerolog"
+	slogzerolog "github.com/samber/slog-zerolog/v2"
 )
 
-// Interface -.
-type Interface interface {
-	Debug(message any, args ...any)
-	Info(message string, args ...any)
-	Warn(message string, args ...any)
-	Error(message any, args ...any)
-	Fatal(message any, args ...any)
+const _callerKey = "caller"
+
+// New returns a slog logger that writes JSON to stdout.
+func New(level string) *slog.Logger {
+	return newWithWriter(os.Stdout, level)
 }
 
-// Logger -.
-type Logger struct {
-	logger *zerolog.Logger
+func newWithWriter(w io.Writer, level string) *slog.Logger {
+	zl := zerolog.New(w)
+
+	handler := slogzerolog.Option{
+		Level:     parseLevel(level),
+		Logger:    &zl,
+		AddSource: true,
+		Converter: callerConverter,
+	}.NewZerologHandler()
+
+	return slog.New(handler)
 }
 
-var _ Interface = (*Logger)(nil)
-
-// New -.
-func New(level string) *Logger {
-	var l zerolog.Level
-
+func parseLevel(level string) slog.Level {
 	switch strings.ToLower(level) {
-	case "error":
-		l = zerolog.ErrorLevel
-	case "warn":
-		l = zerolog.WarnLevel
-	case "info":
-		l = zerolog.InfoLevel
 	case "debug":
-		l = zerolog.DebugLevel
+		return slog.LevelDebug
+	case "warn":
+		return slog.LevelWarn
+	case "error":
+		return slog.LevelError
 	default:
-		l = zerolog.InfoLevel
-	}
-
-	zerolog.CallerMarshalFunc = func(pc uintptr, file string, line int) string {
-		return filepath.Base(file) + ":" + strconv.Itoa(line)
-	}
-
-	zerolog.SetGlobalLevel(l)
-
-	skipFrameCount := 3
-	logger := zerolog.
-		New(os.Stdout).
-		With().
-		Timestamp().
-		CallerWithSkipFrameCount(zerolog.CallerSkipFrameCount + skipFrameCount).
-		Logger()
-
-	return &Logger{
-		logger: new(logger),
+		return slog.LevelInfo
 	}
 }
 
-// Debug -.
-func (l *Logger) Debug(message any, args ...any) {
-	l.msg(zerolog.DebugLevel, message, args...)
-}
+// callerConverter replaces slog's "source" group with a flat "caller" field
+// holding the base file name and line, matching the previous zerolog output.
+func callerConverter(
+	addSource bool,
+	replaceAttr func(groups []string, a slog.Attr) slog.Attr,
+	loggerAttr []slog.Attr,
+	groups []string,
+	record *slog.Record,
+) map[string]any {
+	out := slogzerolog.DefaultConverter(addSource, replaceAttr, loggerAttr, groups, record)
 
-// Info -.
-func (l *Logger) Info(message string, args ...any) {
-	l.log(zerolog.InfoLevel, message, args...)
-}
-
-// Warn -.
-func (l *Logger) Warn(message string, args ...any) {
-	l.log(zerolog.WarnLevel, message, args...)
-}
-
-// Error -.
-func (l *Logger) Error(message any, args ...any) {
-	l.msg(zerolog.ErrorLevel, message, args...)
-}
-
-// Fatal -.
-func (l *Logger) Fatal(message any, args ...any) {
-	l.msg(zerolog.FatalLevel, message, args...)
-
-	os.Exit(1)
-}
-
-func (l *Logger) log(level zerolog.Level, message string, args ...any) {
-	if len(args) == 0 {
-		l.logger.WithLevel(level).Msg(message)
-	} else {
-		l.logger.WithLevel(level).Msgf(message, args...)
+	if !addSource {
+		return out
 	}
-}
 
-func (l *Logger) msg(level zerolog.Level, message any, args ...any) {
-	switch msg := message.(type) {
-	case error:
-		l.log(level, msg.Error(), args...)
-	case string:
-		l.log(level, msg, args...)
-	default:
-		l.log(level, fmt.Sprintf("%s message %v has unknown type %v", level, message, msg), args...)
-	}
+	delete(out, slogzerolog.SourceKey)
+
+	frames := runtime.CallersFrames([]uintptr{record.PC})
+	frame, _ := frames.Next()
+	out[_callerKey] = filepath.Base(frame.File) + ":" + strconv.Itoa(frame.Line)
+
+	return out
 }

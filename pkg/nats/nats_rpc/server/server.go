@@ -5,10 +5,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/goccy/go-json"
-	"github.com/leijux/go-clean-template/pkg/logger"
 	natsrpc "github.com/leijux/go-clean-template/pkg/nats/nats_rpc"
 	"github.com/nats-io/nats.go"
 	"go.opentelemetry.io/otel"
@@ -43,7 +43,7 @@ type Server struct {
 
 	timeout time.Duration
 
-	logger logger.Interface
+	logger *slog.Logger
 }
 
 // New -.
@@ -51,7 +51,7 @@ func New(
 	url,
 	serverSubject string,
 	router map[string]CallHandler,
-	l logger.Interface,
+	l *slog.Logger,
 	opts ...Option,
 ) (*Server, error) {
 	group, ctx := errgroup.WithContext(context.Background())
@@ -122,7 +122,7 @@ func (s *Server) Shutdown() error {
 	// Wait for all goroutines to finish and get any error
 	err := s.eg.Wait()
 	if err != nil && !errors.Is(err, context.Canceled) {
-		s.logger.Error(err, "nats_rpc server - Server - Shutdown - s.eg.Wait")
+		s.logger.Error("nats_rpc server - Server - Shutdown - s.eg.Wait", "error", err)
 
 		shutdownErrors = append(shutdownErrors, err)
 	}
@@ -131,7 +131,7 @@ func (s *Server) Shutdown() error {
 	if s.subscription != nil {
 		err := s.subscription.Unsubscribe()
 		if err != nil {
-			s.logger.Error(err, "nats_rpc server - Server - Shutdown - s.conn.Subscription.Unsubscribe")
+			s.logger.Error("nats_rpc server - Server - Shutdown - s.conn.Subscription.Unsubscribe", "error", err)
 
 			shutdownErrors = append(shutdownErrors, err)
 		}
@@ -182,14 +182,14 @@ func (s *Server) handleMessage(msg *nats.Msg) {
 		span.SetStatus(codes.Error, err.Error())
 		s.publish(msg, nil, natsrpc.ErrInternalServer.Error())
 
-		s.logger.Error(err, "nats_rpc server - Server - handleMessage - callHandler")
+		s.logger.Error("nats_rpc server - Server - handleMessage - callHandler", "error", err)
 
 		return
 	}
 
 	body, err := json.Marshal(response)
 	if err != nil {
-		s.logger.Error(err, "nats_rpc server - Server - handleMessage - json.Marshal")
+		s.logger.Error("nats_rpc server - Server - handleMessage - json.Marshal", "error", err)
 
 		s.publish(msg, nil, natsrpc.ErrInternalServer.Error())
 
@@ -206,6 +206,6 @@ func (s *Server) publish(msg *nats.Msg, body []byte, status string) {
 
 	err := s.connection.PublishMsg(respondMsg)
 	if err != nil {
-		s.logger.Error(err, "nats_rpc server - Server - publish - msg.Respond")
+		s.logger.Error("nats_rpc server - Server - publish - msg.Respond", "error", err)
 	}
 }

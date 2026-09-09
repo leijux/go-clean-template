@@ -1,15 +1,16 @@
 package v1
 
 import (
+	"log/slog"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/leijux/go-clean-template/internal/usecase"
 	"github.com/leijux/go-clean-template/pkg/jwt"
-	"github.com/leijux/go-clean-template/pkg/logger"
 	"github.com/leijux/go-clean-template/pkg/rabbitmq/rmq_rpc/server"
 )
 
 // NewRoutes -.
-func NewRoutes(routes map[string]server.CallHandler, t usecase.Translation, u usecase.User, tk usecase.Task, j *jwt.Manager, l logger.Interface) {
+func NewRoutes(routes map[string]server.CallHandler, t usecase.Translation, u usecase.User, tk usecase.Task, j *jwt.Manager, l *slog.Logger) {
 	r := &V1{t: t, u: u, tk: tk, j: j, l: l, v: validator.New(validator.WithRequiredStructEnabled())}
 
 	routes["v1.auth.register"] = r.register()

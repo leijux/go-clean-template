@@ -5,10 +5,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/goccy/go-json"
-	"github.com/leijux/go-clean-template/pkg/logger"
 	rmqrpc "github.com/leijux/go-clean-template/pkg/rabbitmq/rmq_rpc"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"go.opentelemetry.io/otel"
@@ -41,11 +41,11 @@ type Server struct {
 
 	timeout time.Duration
 
-	logger logger.Interface
+	logger *slog.Logger
 }
 
 // New -.
-func New(url, serverExchange string, router map[string]CallHandler, l logger.Interface, opts ...Option) (*Server, error) {
+func New(url, serverExchange string, router map[string]CallHandler, l *slog.Logger, opts ...Option) (*Server, error) {
 	group, ctx := errgroup.WithContext(context.Background())
 	group.SetLimit(1) // Run only one goroutine
 
@@ -111,7 +111,7 @@ func (s *Server) Shutdown() error {
 	// Wait for all goroutines to finish and get any error
 	err := s.eg.Wait()
 	if err != nil && !errors.Is(err, context.Canceled) {
-		s.logger.Error(err, "rmq_rpc server - Server - Shutdown - s.eg.Wait")
+		s.logger.Error("rmq_rpc server - Server - Shutdown - s.eg.Wait", "error", err)
 
 		shutdownErrors = append(shutdownErrors, err)
 	}
@@ -120,7 +120,7 @@ func (s *Server) Shutdown() error {
 
 	err = s.conn.Connection.Close()
 	if err != nil {
-		s.logger.Error(err, "rmq_rpc server - Server - Shutdown - s.Connection.Close")
+		s.logger.Error("rmq_rpc server - Server - Shutdown - s.Connection.Close", "error", err)
 
 		shutdownErrors = append(shutdownErrors, err)
 	}
@@ -182,14 +182,14 @@ func (s *Server) serveCall(d *amqp.Delivery) {
 		span.SetStatus(codes.Error, err.Error())
 		s.publish(d, nil, rmqrpc.ErrInternalServer.Error())
 
-		s.logger.Error(err, "rmq_rpc server - Server - serveCall - callHandler")
+		s.logger.Error("rmq_rpc server - Server - serveCall - callHandler", "error", err)
 
 		return
 	}
 
 	body, err := json.Marshal(response)
 	if err != nil {
-		s.logger.Error(err, "rmq_rpc server - Server - serveCall - json.Marshal")
+		s.logger.Error("rmq_rpc server - Server - serveCall - json.Marshal", "error", err)
 	}
 
 	s.publish(d, body, rmqrpc.Success)
@@ -198,7 +198,7 @@ func (s *Server) serveCall(d *amqp.Delivery) {
 func (s *Server) ack(d *amqp.Delivery, multiple bool) {
 	err := d.Ack(multiple)
 	if err != nil {
-		s.logger.Error(err, "rmq_rpc server - Server - ack - d.Ack")
+		s.logger.Error("rmq_rpc server - Server - ack - d.Ack", "error", err)
 	}
 }
 
@@ -216,6 +216,6 @@ func (s *Server) publish(d *amqp.Delivery, body []byte, status string) {
 		},
 	)
 	if err != nil {
-		s.logger.Error(err, "rmq_rpc server - Server - publish - s.conn.Channel.Publish")
+		s.logger.Error("rmq_rpc server - Server - publish - s.conn.Channel.Publish", "error", err)
 	}
 }

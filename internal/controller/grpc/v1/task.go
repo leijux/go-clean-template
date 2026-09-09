@@ -21,7 +21,7 @@ func (c *TaskController) CreateTask(ctx context.Context, req *v1.CreateTaskReque
 
 	task, err := c.tk.Create(ctx, userID, req.GetTitle(), req.GetDescription())
 	if err != nil {
-		c.l.Error(err, "grpc - v1 - CreateTask")
+		c.l.Error("grpc - v1 - CreateTask", "error", err)
 
 		return nil, status.Error(codes.Internal, "internal server error")
 	}
@@ -38,7 +38,7 @@ func (c *TaskController) GetTask(ctx context.Context, req *v1.GetTaskRequest) (*
 
 	task, err := c.tk.Get(ctx, userID, req.GetId())
 	if err != nil {
-		c.l.Error(err, "grpc - v1 - GetTask")
+		c.l.Error("grpc - v1 - GetTask", "error", err)
 
 		if errors.Is(err, entity.ErrTaskNotFound) {
 			return nil, status.Error(codes.NotFound, "task not found")
@@ -74,7 +74,7 @@ func (c *TaskController) ListTasks(ctx context.Context, req *v1.ListTasksRequest
 
 	tasks, total, err := c.tk.List(ctx, userID, statusFilter, int(req.GetLimit()), int(req.GetOffset()))
 	if err != nil {
-		c.l.Error(err, "grpc - v1 - ListTasks")
+		c.l.Error("grpc - v1 - ListTasks", "error", err)
 
 		return nil, status.Error(codes.Internal, "internal server error")
 	}
@@ -91,7 +91,7 @@ func (c *TaskController) UpdateTask(ctx context.Context, req *v1.UpdateTaskReque
 
 	task, err := c.tk.Update(ctx, userID, req.GetId(), req.GetTitle(), req.GetDescription())
 	if err != nil {
-		c.l.Error(err, "grpc - v1 - UpdateTask")
+		c.l.Error("grpc - v1 - UpdateTask", "error", err)
 
 		if errors.Is(err, entity.ErrTaskNotFound) {
 			return nil, status.Error(codes.NotFound, "task not found")
@@ -116,7 +116,7 @@ func (c *TaskController) TransitionTask(ctx context.Context, req *v1.TransitionT
 
 	task, err := c.tk.Transition(ctx, userID, req.GetId(), entity.TaskStatus(req.GetStatus()))
 	if err != nil {
-		c.l.Error(err, "grpc - v1 - TransitionTask")
+		c.l.Error("grpc - v1 - TransitionTask", "error", err)
 
 		if errors.Is(err, entity.ErrTaskNotFound) {
 			return nil, status.Error(codes.NotFound, "task not found")
@@ -145,7 +145,7 @@ func (c *TaskController) DeleteTask(ctx context.Context, req *v1.DeleteTaskReque
 
 	err := c.tk.Delete(ctx, userID, req.GetId())
 	if err != nil {
-		c.l.Error(err, "grpc - v1 - DeleteTask")
+		c.l.Error("grpc - v1 - DeleteTask", "error", err)
 
 		if errors.Is(err, entity.ErrTaskNotFound) {
 			return nil, status.Error(codes.NotFound, "task not found")

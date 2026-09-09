@@ -1,15 +1,16 @@
 package grpc
 
 import (
+	"log/slog"
+
 	v1 "github.com/leijux/go-clean-template/internal/controller/grpc/v1"
 	"github.com/leijux/go-clean-template/internal/usecase"
-	"github.com/leijux/go-clean-template/pkg/logger"
 	pbgrpc "google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
 // NewRouter -.
-func NewRouter(app *pbgrpc.Server, t usecase.Translation, u usecase.User, tk usecase.Task, l logger.Interface) {
+func NewRouter(app *pbgrpc.Server, t usecase.Translation, u usecase.User, tk usecase.Task, l *slog.Logger) {
 	{
 		v1.NewAuthRoutes(app, u, l)
 		v1.NewTaskRoutes(app, tk, l)

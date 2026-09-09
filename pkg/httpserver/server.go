@@ -4,11 +4,11 @@ package httpserver
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"time"
 
 	"github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v3"
-	"github.com/leijux/go-clean-template/pkg/logger"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -33,11 +33,11 @@ type Server struct {
 	writeTimeout    time.Duration
 	shutdownTimeout time.Duration
 
-	logger logger.Interface
+	logger *slog.Logger
 }
 
 // New -.
-func New(l logger.Interface, opts ...Option) *Server {
+func New(l *slog.Logger, opts ...Option) *Server {
 	group, ctx := errgroup.WithContext(context.Background())
 	group.SetLimit(1) // Run only one goroutine
 
@@ -99,7 +99,7 @@ func (s *Server) Shutdown() error {
 
 	err := s.App.ShutdownWithTimeout(s.shutdownTimeout)
 	if err != nil && !errors.Is(err, context.Canceled) {
-		s.logger.Error(err, "restapi server - Server - Shutdown - s.App.ShutdownWithTimeout")
+		s.logger.Error("restapi server - Server - Shutdown - s.App.ShutdownWithTimeout", "error", err)
 
 		shutdownErrors = append(shutdownErrors, err)
 	}
@@ -107,7 +107,7 @@ func (s *Server) Shutdown() error {
 	// Wait for all goroutines to finish and get any error
 	err = s.eg.Wait()
 	if err != nil && !errors.Is(err, context.Canceled) {
-		s.logger.Error(err, "restapi server - Server - Shutdown - s.eg.Wait")
+		s.logger.Error("restapi server - Server - Shutdown - s.eg.Wait", "error", err)
 
 		shutdownErrors = append(shutdownErrors, err)
 	}

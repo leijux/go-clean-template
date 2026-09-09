@@ -17,7 +17,7 @@ func (r *V1) register() server.CallHandler {
 
 		err := json.Unmarshal(msg.Data, &req)
 		if err != nil {
-			r.l.Error(err, "nats_rpc - V1 - register")
+			r.l.Error("nats_rpc - V1 - register", "error", err)
 
 			return nil, fmt.Errorf("nats_rpc - V1 - register - json.Unmarshal: %w", err)
 		}
@@ -28,7 +28,7 @@ func (r *V1) register() server.CallHandler {
 
 		user, err := r.u.Register(ctx, req.Username, req.Email, req.Password)
 		if err != nil {
-			r.l.Error(err, "nats_rpc - V1 - register")
+			r.l.Error("nats_rpc - V1 - register", "error", err)
 
 			return nil, fmt.Errorf("nats_rpc - V1 - register: %w", err)
 		}
@@ -43,7 +43,7 @@ func (r *V1) login() server.CallHandler {
 
 		err := json.Unmarshal(msg.Data, &req)
 		if err != nil {
-			r.l.Error(err, "nats_rpc - V1 - login")
+			r.l.Error("nats_rpc - V1 - login", "error", err)
 
 			return nil, fmt.Errorf("nats_rpc - V1 - login - json.Unmarshal: %w", err)
 		}
@@ -54,7 +54,7 @@ func (r *V1) login() server.CallHandler {
 
 		token, err := r.u.Login(ctx, req.Email, req.Password)
 		if err != nil {
-			r.l.Error(err, "nats_rpc - V1 - login")
+			r.l.Error("nats_rpc - V1 - login", "error", err)
 
 			return nil, fmt.Errorf("nats_rpc - V1 - login: %w", err)
 		}

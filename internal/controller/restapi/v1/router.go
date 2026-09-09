@@ -1,15 +1,16 @@
 package v1
 
 import (
+	"log/slog"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
 	"github.com/leijux/go-clean-template/internal/controller/restapi/middleware"
 	"github.com/leijux/go-clean-template/internal/usecase"
-	"github.com/leijux/go-clean-template/pkg/logger"
 )
 
 // NewRoutes -.
-func NewRoutes(apiV1Group fiber.Router, t usecase.Translation, u usecase.User, tk usecase.Task, jwtSecret []byte, l logger.Interface) {
+func NewRoutes(apiV1Group fiber.Router, t usecase.Translation, u usecase.User, tk usecase.Task, jwtSecret []byte, l *slog.Logger) {
 	r := &V1{t: t, u: u, tk: tk, l: l, v: validator.New(validator.WithRequiredStructEnabled())}
 
 	// Public routes

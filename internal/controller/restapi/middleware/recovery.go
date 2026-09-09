@@ -2,12 +2,12 @@ package middleware
 
 import (
 	"fmt"
+	"log/slog"
 	"runtime/debug"
 	"strings"
 
 	"github.com/gofiber/fiber/v3"
 	fiberRecover "github.com/gofiber/fiber/v3/middleware/recover"
-	"github.com/leijux/go-clean-template/pkg/logger"
 )
 
 func buildPanicMessage(ctx fiber.Ctx, err any) string {
@@ -24,13 +24,13 @@ func buildPanicMessage(ctx fiber.Ctx, err any) string {
 	return result.String()
 }
 
-func logPanic(l logger.Interface) func(c fiber.Ctx, err any) {
+func logPanic(l *slog.Logger) func(c fiber.Ctx, err any) {
 	return func(ctx fiber.Ctx, err any) {
 		l.Error(buildPanicMessage(ctx, err))
 	}
 }
 
-func Recovery(l logger.Interface) func(c fiber.Ctx) error {
+func Recovery(l *slog.Logger) func(c fiber.Ctx) error {
 	return fiberRecover.New(fiberRecover.Config{
 		EnableStackTrace:  true,
 		StackTraceHandler: logPanic(l),

@@ -33,20 +33,20 @@ func (r *V1) createTask(ctx fiber.Ctx) error {
 	var body request.CreateTask
 
 	if err := ctx.Bind().Body(&body); err != nil {
-		r.l.Error(err, "restapi - v1 - createTask")
+		r.l.Error("restapi - v1 - createTask", "error", err)
 
 		return errorResponse(ctx, http.StatusBadRequest, "invalid request body")
 	}
 
 	if err := r.v.Struct(body); err != nil {
-		r.l.Error(err, "restapi - v1 - createTask")
+		r.l.Error("restapi - v1 - createTask", "error", err)
 
 		return errorResponse(ctx, http.StatusBadRequest, "invalid request body")
 	}
 
 	task, err := r.tk.Create(ctx.Context(), userID, body.Title, body.Description)
 	if err != nil {
-		r.l.Error(err, "restapi - v1 - createTask")
+		r.l.Error("restapi - v1 - createTask", "error", err)
 
 		return errorResponse(ctx, http.StatusInternalServerError, "internal server error")
 	}
@@ -96,7 +96,7 @@ func (r *V1) listTasks(ctx fiber.Ctx) error {
 
 	tasks, total, err := r.tk.List(ctx.Context(), userID, status, limit, offset)
 	if err != nil {
-		r.l.Error(err, "restapi - v1 - listTasks")
+		r.l.Error("restapi - v1 - listTasks", "error", err)
 
 		return errorResponse(ctx, http.StatusInternalServerError, "internal server error")
 	}
@@ -130,7 +130,7 @@ func (r *V1) getTask(ctx fiber.Ctx) error {
 
 	task, err := r.tk.Get(ctx.Context(), userID, taskID)
 	if err != nil {
-		r.l.Error(err, "restapi - v1 - getTask")
+		r.l.Error("restapi - v1 - getTask", "error", err)
 
 		if errors.Is(err, entity.ErrTaskNotFound) {
 			return errorResponse(ctx, http.StatusNotFound, "task not found")
@@ -173,20 +173,20 @@ func (r *V1) updateTask(ctx fiber.Ctx) error {
 	var body request.UpdateTask
 
 	if err := ctx.Bind().Body(&body); err != nil {
-		r.l.Error(err, "restapi - v1 - updateTask")
+		r.l.Error("restapi - v1 - updateTask", "error", err)
 
 		return errorResponse(ctx, http.StatusBadRequest, "invalid request body")
 	}
 
 	if err := r.v.Struct(body); err != nil {
-		r.l.Error(err, "restapi - v1 - updateTask")
+		r.l.Error("restapi - v1 - updateTask", "error", err)
 
 		return errorResponse(ctx, http.StatusBadRequest, "invalid request body")
 	}
 
 	task, err := r.tk.Update(ctx.Context(), userID, taskID, body.Title, body.Description)
 	if err != nil {
-		r.l.Error(err, "restapi - v1 - updateTask")
+		r.l.Error("restapi - v1 - updateTask", "error", err)
 
 		if errors.Is(err, entity.ErrTaskNotFound) {
 			return errorResponse(ctx, http.StatusNotFound, "task not found")
@@ -229,20 +229,20 @@ func (r *V1) transitionTask(ctx fiber.Ctx) error {
 	var body request.TransitionTask
 
 	if err := ctx.Bind().Body(&body); err != nil {
-		r.l.Error(err, "restapi - v1 - transitionTask")
+		r.l.Error("restapi - v1 - transitionTask", "error", err)
 
 		return errorResponse(ctx, http.StatusBadRequest, "invalid request body")
 	}
 
 	if err := r.v.Struct(body); err != nil {
-		r.l.Error(err, "restapi - v1 - transitionTask")
+		r.l.Error("restapi - v1 - transitionTask", "error", err)
 
 		return errorResponse(ctx, http.StatusBadRequest, "invalid request body")
 	}
 
 	task, err := r.tk.Transition(ctx.Context(), userID, taskID, body.Status)
 	if err != nil {
-		r.l.Error(err, "restapi - v1 - transitionTask")
+		r.l.Error("restapi - v1 - transitionTask", "error", err)
 
 		if errors.Is(err, entity.ErrTaskNotFound) {
 			return errorResponse(ctx, http.StatusNotFound, "task not found")
@@ -283,7 +283,7 @@ func (r *V1) deleteTask(ctx fiber.Ctx) error {
 
 	err := r.tk.Delete(ctx.Context(), userID, taskID)
 	if err != nil {
-		r.l.Error(err, "restapi - v1 - deleteTask")
+		r.l.Error("restapi - v1 - deleteTask", "error", err)
 
 		if errors.Is(err, entity.ErrTaskNotFound) {
 			return errorResponse(ctx, http.StatusNotFound, "task not found")

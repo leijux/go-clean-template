@@ -27,7 +27,7 @@ func (r *V1) history(ctx fiber.Ctx) error {
 
 	translationHistory, err := r.t.History(ctx.Context(), userID)
 	if err != nil {
-		r.l.Error(err, "restapi - v1 - history")
+		r.l.Error("restapi - v1 - history", "error", err)
 
 		return errorResponse(ctx, http.StatusInternalServerError, "database problems")
 	}
@@ -57,13 +57,13 @@ func (r *V1) doTranslate(ctx fiber.Ctx) error {
 	var body request.Translate
 
 	if err := ctx.Bind().Body(&body); err != nil {
-		r.l.Error(err, "restapi - v1 - doTranslate")
+		r.l.Error("restapi - v1 - doTranslate", "error", err)
 
 		return errorResponse(ctx, http.StatusBadRequest, "invalid request body")
 	}
 
 	if err := r.v.Struct(body); err != nil {
-		r.l.Error(err, "restapi - v1 - doTranslate")
+		r.l.Error("restapi - v1 - doTranslate", "error", err)
 
 		return errorResponse(ctx, http.StatusBadRequest, "invalid request body")
 	}
@@ -78,7 +78,7 @@ func (r *V1) doTranslate(ctx fiber.Ctx) error {
 		},
 	)
 	if err != nil {
-		r.l.Error(err, "restapi - v1 - doTranslate")
+		r.l.Error("restapi - v1 - doTranslate", "error", err)
 
 		return errorResponse(ctx, http.StatusInternalServerError, "translation service problems")
 	}

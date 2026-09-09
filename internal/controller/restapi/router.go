@@ -1,6 +1,7 @@
 package restapi
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/gofiber/contrib/v3/otel"
@@ -12,7 +13,6 @@ import (
 	"github.com/leijux/go-clean-template/internal/controller/restapi/middleware"
 	v1 "github.com/leijux/go-clean-template/internal/controller/restapi/v1"
 	"github.com/leijux/go-clean-template/internal/usecase"
-	"github.com/leijux/go-clean-template/pkg/logger"
 )
 
 // NewRouter -.
@@ -26,7 +26,7 @@ import (
 //	@securityDefinitions.apikey BearerAuth
 //	@in header
 //	@name Authorization
-func NewRouter(app *fiber.App, cfg *config.Config, t usecase.Translation, u usecase.User, tk usecase.Task, l logger.Interface) {
+func NewRouter(app *fiber.App, cfg *config.Config, t usecase.Translation, u usecase.User, tk usecase.Task, l *slog.Logger) {
 	// Options
 	app.Use(middleware.Logger(l))
 	app.Use(middleware.Recovery(l))

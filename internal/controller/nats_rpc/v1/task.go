@@ -32,7 +32,7 @@ func (r *V1) createTask() server.CallHandler {
 
 		task, err := r.tk.Create(ctx, userID, req.Title, req.Description)
 		if err != nil {
-			r.l.Error(err, "nats_rpc - V1 - createTask")
+			r.l.Error("nats_rpc - V1 - createTask", "error", err)
 
 			return nil, fmt.Errorf("nats_rpc - V1 - createTask: %w", err)
 		}
@@ -61,7 +61,7 @@ func (r *V1) getTask() server.CallHandler {
 
 		task, err := r.tk.Get(ctx, userID, req.ID)
 		if err != nil {
-			r.l.Error(err, "nats_rpc - V1 - getTask")
+			r.l.Error("nats_rpc - V1 - getTask", "error", err)
 
 			return nil, fmt.Errorf("nats_rpc - V1 - getTask: %w", err)
 		}
@@ -97,7 +97,7 @@ func (r *V1) listTasks() server.CallHandler {
 
 		tasks, total, err := r.tk.List(ctx, userID, status, req.Limit, req.Offset)
 		if err != nil {
-			r.l.Error(err, "nats_rpc - V1 - listTasks")
+			r.l.Error("nats_rpc - V1 - listTasks", "error", err)
 
 			return nil, fmt.Errorf("nats_rpc - V1 - listTasks: %w", err)
 		}
@@ -126,7 +126,7 @@ func (r *V1) updateTask() server.CallHandler {
 
 		task, err := r.tk.Update(ctx, userID, req.ID, req.Title, req.Description)
 		if err != nil {
-			r.l.Error(err, "nats_rpc - V1 - updateTask")
+			r.l.Error("nats_rpc - V1 - updateTask", "error", err)
 
 			return nil, fmt.Errorf("nats_rpc - V1 - updateTask: %w", err)
 		}
@@ -155,7 +155,7 @@ func (r *V1) transitionTask() server.CallHandler {
 
 		task, err := r.tk.Transition(ctx, userID, req.ID, entity.TaskStatus(req.Status))
 		if err != nil {
-			r.l.Error(err, "nats_rpc - V1 - transitionTask")
+			r.l.Error("nats_rpc - V1 - transitionTask", "error", err)
 
 			return nil, fmt.Errorf("nats_rpc - V1 - transitionTask: %w", err)
 		}
@@ -184,7 +184,7 @@ func (r *V1) deleteTask() server.CallHandler {
 
 		err = r.tk.Delete(ctx, userID, req.ID)
 		if err != nil {
-			r.l.Error(err, "nats_rpc - V1 - deleteTask")
+			r.l.Error("nats_rpc - V1 - deleteTask", "error", err)
 
 			return nil, fmt.Errorf("nats_rpc - V1 - deleteTask: %w", err)
 		}

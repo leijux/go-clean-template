@@ -20,7 +20,7 @@ func (r *V1) getHistory() server.CallHandler {
 
 		translationHistory, err := r.t.History(ctx, userID)
 		if err != nil {
-			r.l.Error(err, "amqp_rpc - V1 - getHistory")
+			r.l.Error("amqp_rpc - V1 - getHistory", "error", err)
 
 			return nil, fmt.Errorf("amqp_rpc - V1 - getHistory: %w", err)
 		}
@@ -53,7 +53,7 @@ func (r *V1) translate() server.CallHandler {
 			Original:    req.Original,
 		})
 		if err != nil {
-			r.l.Error(err, "amqp_rpc - V1 - translate")
+			r.l.Error("amqp_rpc - V1 - translate", "error", err)
 
 			return nil, fmt.Errorf("amqp_rpc - V1 - translate: %w", err)
 		}

@@ -16,7 +16,7 @@ import (
 func (c *AuthController) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.RegisterResponse, error) {
 	user, err := c.u.Register(ctx, req.GetUsername(), req.GetEmail(), req.GetPassword())
 	if err != nil {
-		c.l.Error(err, "grpc - v1 - Register")
+		c.l.Error("grpc - v1 - Register", "error", err)
 
 		if errors.Is(err, entity.ErrUserAlreadyExists) {
 			return nil, status.Error(codes.AlreadyExists, "user already exists")
@@ -32,7 +32,7 @@ func (c *AuthController) Register(ctx context.Context, req *v1.RegisterRequest) 
 func (c *AuthController) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponse, error) {
 	token, err := c.u.Login(ctx, req.GetEmail(), req.GetPassword())
 	if err != nil {
-		c.l.Error(err, "grpc - v1 - Login")
+		c.l.Error("grpc - v1 - Login", "error", err)
 
 		if errors.Is(err, entity.ErrInvalidCredentials) {
 			return nil, status.Error(codes.Unauthenticated, "invalid credentials")
@@ -53,7 +53,7 @@ func (c *AuthController) GetProfile(ctx context.Context, _ *v1.GetProfileRequest
 
 	user, err := c.u.GetUser(ctx, userID)
 	if err != nil {
-		c.l.Error(err, "grpc - v1 - GetProfile")
+		c.l.Error("grpc - v1 - GetProfile", "error", err)
 
 		if errors.Is(err, entity.ErrUserNotFound) {
 			return nil, status.Error(codes.NotFound, "user not found")

@@ -20,7 +20,7 @@ func (r *V1) getHistory() server.CallHandler {
 
 		translationHistory, err := r.t.History(ctx, userID)
 		if err != nil {
-			r.l.Error(err, "nats_rpc - V1 - getHistory")
+			r.l.Error("nats_rpc - V1 - getHistory", "error", err)
 
 			return nil, fmt.Errorf("nats_rpc - V1 - getHistory: %w", err)
 		}
@@ -53,7 +53,7 @@ func (r *V1) translate() server.CallHandler {
 			Original:    req.Original,
 		})
 		if err != nil {
-			r.l.Error(err, "nats_rpc - V1 - translate")
+			r.l.Error("nats_rpc - V1 - translate", "error", err)
 
 			return nil, fmt.Errorf("nats_rpc - V1 - translate: %w", err)
 		}

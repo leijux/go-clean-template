@@ -1,11 +1,11 @@
 package middleware
 
 import (
+	"log/slog"
 	"strconv"
 	"strings"
 
 	"github.com/gofiber/fiber/v3"
-	"github.com/leijux/go-clean-template/pkg/logger"
 )
 
 func buildRequestMessage(ctx fiber.Ctx) string {
@@ -24,11 +24,11 @@ func buildRequestMessage(ctx fiber.Ctx) string {
 	return result.String()
 }
 
-func Logger(l logger.Interface) func(c fiber.Ctx) error {
+func Logger(l *slog.Logger) func(c fiber.Ctx) error {
 	return func(ctx fiber.Ctx) error {
 		err := ctx.Next()
 
-		l.Info("%s", buildRequestMessage(ctx))
+		l.Info(buildRequestMessage(ctx))
 
 		return err
 	}

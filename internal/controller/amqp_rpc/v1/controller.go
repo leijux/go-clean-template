@@ -1,10 +1,11 @@
 package v1
 
 import (
+	"log/slog"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/leijux/go-clean-template/internal/usecase"
 	"github.com/leijux/go-clean-template/pkg/jwt"
-	"github.com/leijux/go-clean-template/pkg/logger"
 )
 
 // V1 -.
@@ -13,6 +14,6 @@ type V1 struct {
 	u  usecase.User
 	tk usecase.Task
 	j  *jwt.Manager
-	l  logger.Interface
+	l  *slog.Logger
 	v  *validator.Validate
 }

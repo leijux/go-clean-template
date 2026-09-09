@@ -20,7 +20,7 @@ func (c *TranslationController) GetHistory(ctx context.Context, _ *v1.GetHistory
 
 	translationHistory, err := c.t.History(ctx, userID)
 	if err != nil {
-		c.l.Error(err, "grpc - v1 - GetHistory")
+		c.l.Error("grpc - v1 - GetHistory", "error", err)
 
 		return nil, status.Error(codes.Internal, "internal server error")
 	}
@@ -41,7 +41,7 @@ func (c *TranslationController) Translate(ctx context.Context, req *v1.Translate
 		Original:    req.GetOriginal(),
 	})
 	if err != nil {
-		c.l.Error(err, "grpc - v1 - Translate")
+		c.l.Error("grpc - v1 - Translate", "error", err)
 
 		return nil, status.Error(codes.Internal, "translation service problems")
 	}

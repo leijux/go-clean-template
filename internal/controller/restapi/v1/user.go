@@ -26,20 +26,20 @@ func (r *V1) register(ctx fiber.Ctx) error {
 	var body request.Register
 
 	if err := ctx.Bind().Body(&body); err != nil {
-		r.l.Error(err, "restapi - v1 - register")
+		r.l.Error("restapi - v1 - register", "error", err)
 
 		return errorResponse(ctx, http.StatusBadRequest, "invalid request body")
 	}
 
 	if err := r.v.Struct(body); err != nil {
-		r.l.Error(err, "restapi - v1 - register")
+		r.l.Error("restapi - v1 - register", "error", err)
 
 		return errorResponse(ctx, http.StatusBadRequest, "invalid request body")
 	}
 
 	user, err := r.u.Register(ctx.Context(), body.Username, body.Email, body.Password)
 	if err != nil {
-		r.l.Error(err, "restapi - v1 - register")
+		r.l.Error("restapi - v1 - register", "error", err)
 
 		if errors.Is(err, entity.ErrUserAlreadyExists) {
 			return errorResponse(ctx, http.StatusConflict, "user already exists")
@@ -67,20 +67,20 @@ func (r *V1) login(ctx fiber.Ctx) error {
 	var body request.Login
 
 	if err := ctx.Bind().Body(&body); err != nil {
-		r.l.Error(err, "restapi - v1 - login")
+		r.l.Error("restapi - v1 - login", "error", err)
 
 		return errorResponse(ctx, http.StatusBadRequest, "invalid request body")
 	}
 
 	if err := r.v.Struct(body); err != nil {
-		r.l.Error(err, "restapi - v1 - login")
+		r.l.Error("restapi - v1 - login", "error", err)
 
 		return errorResponse(ctx, http.StatusBadRequest, "invalid request body")
 	}
 
 	token, err := r.u.Login(ctx.Context(), body.Email, body.Password)
 	if err != nil {
-		r.l.Error(err, "restapi - v1 - login")
+		r.l.Error("restapi - v1 - login", "error", err)
 
 		if errors.Is(err, entity.ErrInvalidCredentials) {
 			return errorResponse(ctx, http.StatusUnauthorized, "invalid credentials")
@@ -111,7 +111,7 @@ func (r *V1) profile(ctx fiber.Ctx) error {
 
 	user, err := r.u.GetUser(ctx.Context(), userID)
 	if err != nil {
-		r.l.Error(err, "restapi - v1 - profile")
+		r.l.Error("restapi - v1 - profile", "error", err)
 
 		if errors.Is(err, entity.ErrUserNotFound) {
 			return errorResponse(ctx, http.StatusNotFound, "user not found")
