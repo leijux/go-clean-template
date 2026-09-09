@@ -20,6 +20,7 @@ x-backend-app-environment: &x-backend-app-environment
   HTTP_USE_PREFORK_MODE: "false"
   # Logger
   LOG_LEVEL: "debug"
+  # LOG_FILE: "/var/log/app/app.log"
   # PG
   PG_POOL_MAX: "2"
   PG_URL: "postgres://user:myAwEsOm3pa55@w0rd@db:5432/db"

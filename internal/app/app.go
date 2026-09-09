@@ -149,7 +149,7 @@ func (s *servers) shutdownServers(l *slog.Logger) {
 
 // Run creates objects via constructors.
 func Run(cfg *config.Config) error {
-	l := logger.New(cfg.Log.Level)
+	l := logger.New(cfg.Log.Level, cfg.Log.File)
 
 	ctx := context.Background()
 

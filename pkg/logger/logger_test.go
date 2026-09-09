@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"errors"
 	"log/slog"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -121,5 +123,48 @@ func TestCallerConverter_WithoutSource(t *testing.T) {
 
 	if _, ok := out[_callerKey]; ok {
 		t.Fatalf("caller field should be omitted when source is disabled: %v", out)
+	}
+}
+
+func TestNew_WritesToFile(t *testing.T) {
+	t.Parallel()
+
+	path := filepath.Join(t.TempDir(), "app.log")
+
+	rotator := newFileRotator(path)
+
+	t.Cleanup(func() { _ = rotator.Close() })
+
+	if !rotator.Compress {
+		t.Fatal("rotator should compress rotated files")
+	}
+
+	l := newWithWriter(rotator, "info")
+	l.Info("to file", "user", "bob")
+
+	content, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read log file: %v", err)
+	}
+
+	out := string(content)
+
+	for _, want := range []string{
+		`"level":"info"`,
+		`"message":"to file"`,
+		`"user":"bob"`,
+		`"caller":"logger_test.go:`,
+	} {
+		if !strings.Contains(out, want) {
+			t.Fatalf("log file %q missing %q", out, want)
+		}
+	}
+}
+
+func TestNew_WithoutFileWritesToStdout(t *testing.T) {
+	t.Parallel()
+
+	if l := New("info", ""); l == nil {
+		t.Fatal("New returned nil logger")
 	}
 }
