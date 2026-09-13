@@ -13,71 +13,71 @@ vars:
 
 tasks:
   default:
-    desc: Display this help screen
+    desc: 显示帮助信息
     cmds:
       - task --list
     silent: true
 
-  help: ### Display this help screen
-    desc: Display this help screen
+  help: ### 显示帮助信息
+    desc: 显示帮助信息
     cmds:
       - task --list
     silent: true
 
-  compose-up: ### Run docker compose (without backend and reverse proxy)
-    desc: Run docker compose (without backend and reverse proxy)
+  compose-up: ### 启动 docker compose（不含后端与反向代理）
+    desc: 启动 docker compose（不含后端与反向代理）
     cmds:
       - '{{.BASE_STACK}} up --build -d db rabbitmq nats && docker compose logs -f'
 
-  compose-up-all: ### Run docker compose (with backend and reverse proxy)
-    desc: Run docker compose (with backend and reverse proxy)
+  compose-up-all: ### 启动 docker compose（含后端与反向代理）
+    desc: 启动 docker compose（含后端与反向代理）
     cmds:
       - '{{.BASE_STACK}} up --build -d'
 
-  compose-up-integration-test: ### Run docker compose with integration test
-    desc: Run docker compose with integration test
+  compose-up-integration-test: ### 启动 docker compose 并运行集成测试
+    desc: 启动 docker compose 并运行集成测试
     cmds:
       - '{{.INTEGRATION_TEST_STACK}} up --build --abort-on-container-exit --exit-code-from integration-test; exit_code=$?; {{.INTEGRATION_TEST_STACK}} down --remove-orphans; exit $exit_code'
 
-  compose-down: ### Down docker compose
-    desc: Down docker compose
+  compose-down: ### 停止 docker compose
+    desc: 停止 docker compose
     cmds:
       - '{{.ALL_STACK}} down --remove-orphans'
 
-  swag-v1: ### swag init
-    desc: swag init
+  swag-v1: ### 生成 Swagger 文档
+    desc: 生成 Swagger 文档
     cmds:
       - swag init --parseDependency -g internal/controller/restapi/router.go
 
-  proto-v1: ### generate source files from proto
-    desc: Generate source files from proto
+  proto-v1: ### 由 proto 生成源码
+    desc: 由 proto 生成源码
     cmds:
       - protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative docs/proto/v1/*.proto
 
-  deps: ### deps tidy + verify
-    desc: Tidy and verify modules
+  deps: ### 整理并校验依赖
+    desc: 整理并校验依赖
     cmds:
       - go mod tidy
       - go mod verify
 
-  deps-audit: ### check dependencies vulnerabilities
-    desc: Check dependencies vulnerabilities
+  deps-audit: ### 检查依赖漏洞
+    desc: 检查依赖漏洞
     cmds:
       - govulncheck ./...
 
-  fix-diff: ### Show code changes by `go fix`
-    desc: Show code changes by go fix
+  fix-diff: ### 查看 `go fix` 的代码改动
+    desc: 查看 go fix 的代码改动
     cmds:
       - go fix -diff ./...
 
-  format: ### Run code formatter
-    desc: Run code formatter
+  format: ### 运行代码格式化
+    desc: 运行代码格式化
     cmds:
       - go fix ./...
       - golangci-lint fmt ./...
 
-  run: ### swag run for API v1 (serial deps: deps, swag-v1, proto-v1)
-    desc: swag run for API v1
+  run: ### 运行 API v1（依次执行 deps、swag-v1、proto-v1）
+    desc: 运行 API v1（依次执行 deps、swag-v1、proto-v1）
     cmds:
       - task: deps
       - task: swag-v1
@@ -85,60 +85,137 @@ tasks:
       - go mod download
       - CGO_ENABLED=0 go run -tags migrate ./cmd/app
 
-  docker-rm-volume: ### remove docker volume
-    desc: Remove docker volume
+  dev: ### 并行启动后端与前端开发服务
+    desc: 并行启动后端与前端开发服务
+    deps:
+      - run
+      - frontend-dev
+
+  docker-rm-volume: ### 删除 docker 数据卷
+    desc: 删除 docker 数据卷
     cmds:
       - docker volume rm go-clean-template_pg-data
 
-  linter-golangci: ### check by golangci linter
-    desc: Check by golangci linter
+  linter-golangci: ### 用 golangci-lint 检查
+    desc: 用 golangci-lint 检查
     cmds:
       - golangci-lint run
 
-  linter-hadolint: ### check by hadolint linter
-    desc: Check by hadolint linter
+  linter-hadolint: ### 用 hadolint 检查
+    desc: 用 hadolint 检查
     cmds:
       - "git ls-files --exclude='Dockerfile*' --ignored | xargs hadolint"
 
-  linter-dotenv: ### check by dotenv linter
-    desc: Check by dotenv linter
+  linter-dotenv: ### 用 dotenv-linter 检查
+    desc: 用 dotenv-linter 检查
     cmds:
       - dotenv-linter
 
-  test: ### run test
-    desc: Run test
+  codegraph-status: ### 显示 CodeGraph 索引状态
+    desc: 显示 CodeGraph 索引状态
+    cmds:
+      - codegraph status
+
+  codegraph-index: ### 从零重建 CodeGraph 索引
+    desc: 从零重建 CodeGraph 索引
+    cmds:
+      - codegraph index
+
+  codegraph-sync: ### 同步上次索引之后的改动
+    desc: 同步上次索引之后的改动
+    cmds:
+      - codegraph sync
+
+  codegraph-files: ### 按索引显示项目文件结构
+    desc: 按索引显示项目文件结构
+    cmds:
+      - codegraph files
+
+  codegraph-query: ### 在 CodeGraph 索引中搜索符号（用法：task codegraph-query -- <search>）
+    desc: '在 CodeGraph 索引中搜索符号（用法：task codegraph-query -- <search>）'
+    cmds:
+      - codegraph query {{.CLI_ARGS}}
+
+  codegraph-explore: ### 探索某个领域：相关符号源码与调用路径（用法：task codegraph-explore -- <query>）
+    desc: '探索某个领域：相关符号源码与调用路径（用法：task codegraph-explore -- <query>）'
+    cmds:
+      - codegraph explore {{.CLI_ARGS}}
+
+  codegraph-impact: ### 查看改动某个符号的影响面（用法：task codegraph-impact -- <symbol>）
+    desc: '查看改动某个符号的影响面（用法：task codegraph-impact -- <symbol>）'
+    cmds:
+      - codegraph impact {{.CLI_ARGS}}
+
+  test: ### 运行单元测试
+    desc: 运行单元测试
     cmds:
       - go test -v -race -covermode atomic -coverprofile=coverage.txt ./internal/... ./pkg/...
 
-  integration-test: ### run integration-test
-    desc: Run integration-test
+  integration-test: ### 运行集成测试
+    desc: 运行集成测试
     cmds:
       - go clean -testcache && go test -v ./integration-test/...
 
-  mock: ### run mockgen
-    desc: Run mockgen
+  frontend-install: ### 安装前端依赖
+    desc: 安装前端依赖
+    dir: frontend
+    cmds:
+      - npm install
+
+  frontend-dev: ### 启动前端开发服务器（vite）
+    desc: 启动前端开发服务器（vite）
+    dir: frontend
+    cmds:
+      - npm run dev
+
+  frontend-build: ### 类型检查并构建前端
+    desc: 类型检查并构建前端
+    dir: frontend
+    cmds:
+      - npm run build
+
+  frontend-preview: ### 预览前端生产构建
+    desc: 预览前端生产构建
+    dir: frontend
+    cmds:
+      - npm run preview
+
+  frontend-lint: ### 用 oxlint 检查前端
+    desc: 用 oxlint 检查前端
+    dir: frontend
+    cmds:
+      - npm run lint
+
+  frontend-ui: ### 添加 shadcn/ui 组件（用法：task frontend-ui -- <component>）
+    desc: '添加 shadcn/ui 组件（用法：task frontend-ui -- <component>）'
+    dir: frontend
+    cmds:
+      - npm run ui -- add {{.CLI_ARGS}}
+
+  mock: ### 生成 mock
+    desc: 生成 mock
     cmds:
       - mockgen -source ./internal/repo/contracts.go -package usecase_test > ./internal/usecase/mocks_repo_test.go
       - mockgen -source ./internal/usecase/contracts.go -package usecase_test > ./internal/usecase/mocks_usecase_test.go
 
-  migrate-create: ### create new migration (usage: task migrate-create -- <name>)
-    desc: 'Create new migration (usage: task migrate-create -- <name>)'
+  migrate-create: ### 新建迁移文件（用法：task migrate-create -- <name>）
+    desc: '新建迁移文件（用法：task migrate-create -- <name>）'
     cmds:
       - "migrate create -ext sql -dir migrations '{{.CLI_ARGS}}'"
 
-  migrate-up: ### migration up
-    desc: Migration up
+  migrate-up: ### 执行迁移
+    desc: 执行迁移
     cmds:
       - 'migrate -path migrations -database "$PG_URL?sslmode=disable" up'
 
-  bin-deps: ### install tools
-    desc: Install tools
+  bin-deps: ### 安装工具依赖
+    desc: 安装工具依赖
     cmds:
       - go install tool
       - go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate
 
-  pre-commit: ### run pre-commit (serial: deps, swag-v1, proto-v1, mock, format, linter-golangci, test)
-    desc: Run pre-commit
+  pre-commit: ### 提交前检查（依次执行 deps、swag-v1、proto-v1、mock、format、linter-golangci、test）
+    desc: 提交前检查（依次执行 deps、swag-v1、proto-v1、mock、format、linter-golangci、test）
     cmds:
       - task: deps
       - task: swag-v1
